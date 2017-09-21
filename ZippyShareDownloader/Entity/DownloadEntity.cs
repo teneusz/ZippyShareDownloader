@@ -52,7 +52,7 @@ namespace ZippyShareDownloader.Entity
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             DownloadPercent = e.ProgressPercentage;
-            if ((DateTime.Now - time) < TimeSpan.FromMilliseconds(500)) return;
+            if ((DateTime.Now - time) < TimeSpan.FromMilliseconds(1000)) return;
             OnPropertyChanged(nameof(DownloadPercent));
             time = DateTime.Now;
         }
