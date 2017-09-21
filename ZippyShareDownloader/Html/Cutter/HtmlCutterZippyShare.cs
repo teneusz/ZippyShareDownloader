@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using log4net;
 using Expression = NCalc.Expression;
 
 namespace ZippyShareDownloader.Html.Cutter
 {
     public class HtmlCutterZippyShare : IHtmlLinkCutter
     {
+
+        private static readonly ILog log = LogManager.GetLogger(typeof(HtmlCutterZippyShare));
         public string GetDirectLinkFromLink(string link)
         {
-            Debug.Print(link);
+            
+            log.Debug("start -- GetDirectionLinkFromLink(string)");
+            log.Debug("link = " + link);
             var prefix = "";
             var htmlCode = link;
             if (!link.StartsWith("http"))
@@ -24,11 +29,15 @@ namespace ZippyShareDownloader.Html.Cutter
                     htmlCode = client.DownloadString(htmlCode);
                 }
             }
+            log.Debug("end -- GetDirectionLinkFromLink(string)");
             return GetDirectLinkFromLink(htmlCode, prefix);
         }
 
         private static string GetDirectLinkFromLink(string htmlCode, string prefix)
         {
+            log.Debug("start -- GetDirectLinkFromLink(string,string)");
+            log.Debug(htmlCode);
+            log.Debug(prefix);
             var link = htmlCode;
             link = link.Remove(0, link.IndexOf("/d/", StringComparison.Ordinal));
             var count = link.Length - link.IndexOf("\";", StringComparison.Ordinal);
@@ -41,7 +50,8 @@ namespace ZippyShareDownloader.Html.Cutter
 
 
             link = link.Replace("\" + (" + mathExpression + ") + \"", expression.Evaluate().ToString());
-            Debug.Print(prefix + link);
+            log.Debug(prefix + link);
+            log.Debug("start -- GetDirectLinkFromLink(string,string)");
 
             return prefix + link;
         }

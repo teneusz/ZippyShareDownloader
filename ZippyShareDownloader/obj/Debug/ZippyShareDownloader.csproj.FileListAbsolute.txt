@@ -16,3 +16,6 @@ C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyS
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.g.cs
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\View\AddLinks.baml
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.baml
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.dll
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.xml
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.config

@@ -17,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using log4net.Config;
 using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.Html.Cutter;
 using ZippyShareDownloader.View;
@@ -32,6 +33,7 @@ namespace ZippyShareDownloader
 
         public MainWindow()
         {
+            XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
             InitializeComponent();
             this.DataContext = _viewModel;
         }
