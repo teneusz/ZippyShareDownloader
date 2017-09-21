@@ -39,7 +39,9 @@ namespace ZippyShareDownloader.Html.Cutter
             log.Debug(htmlCode);
             log.Debug(prefix);
             var link = htmlCode;
-            link = link.Remove(0, link.IndexOf("/d/", StringComparison.Ordinal));
+            link = link.Remove(0,
+                link.IndexOf("document.getElementById('dlbutton').href = ", StringComparison.Ordinal));
+            link = link.Remove(0, link.IndexOf("/", StringComparison.Ordinal));
             var count = link.Length - link.IndexOf("\";", StringComparison.Ordinal);
             link = link.Remove(link.IndexOf("\";", StringComparison.Ordinal), count);
 
