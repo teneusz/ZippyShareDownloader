@@ -4,6 +4,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Html;
+using ZippyShareDownloader.util;
 
 namespace ZippyShareDownloader.Entity
 {
@@ -16,10 +17,13 @@ namespace ZippyShareDownloader.Entity
         public string ServiceName { get; set; }
         public int DownloadPercent { get; set; } = 0;
         public Action<object> AfterDownload { get; set; }
+
+        private string _fileLocation = "";
         public DownloadStatus Status { get; set; } = DownloadStatus.Preparing;
 
         public void StartDownload(string saveLocation)
         {
+            _fileLocation = saveLocation + FileName;
             PrepareToDownload();
             time = DateTime.Now;
             using (var wc = new WebClient())
@@ -27,7 +31,7 @@ namespace ZippyShareDownloader.Entity
                 Status = DownloadStatus.Downloading;
                 wc.DownloadProgressChanged += OnDownloadProgressChanged;
                 wc.DownloadFileCompleted += OnDownloadFileCompleted;
-                wc.DownloadFileAsync(new System.Uri(DownloadLink), saveLocation + FileName);
+                wc.DownloadFileAsync(new System.Uri(DownloadLink), _fileLocation);
                 OnPropertyChanged(nameof(Status));
             }
         }
@@ -41,18 +45,34 @@ namespace ZippyShareDownloader.Entity
             }
             else
             {
-                Status = DownloadStatus.Completed;
-                DownloadPercent = 100;
+                CheckIfFileIsDownloadedSuccesful();
+                
             }
             OnPropertyChanged(nameof(DownloadPercent));
             OnPropertyChanged(nameof(Status));
             AfterDownload(null);
         }
 
+        private void CheckIfFileIsDownloadedSuccesful()
+        {
+            if (FileUtil.CheckFileType(_fileLocation))
+            {
+                Status = DownloadStatus.Completed;
+                DownloadPercent = 100;
+            }
+            else
+            {
+                Status = DownloadStatus.Preparing;
+                DownloadPercent = 0;
+                DownloadLink = null;
+            }
+        }
+
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            DownloadPercent = e.ProgressPercentage;
+            
             if ((DateTime.Now - time) < TimeSpan.FromMilliseconds(1000)) return;
+            DownloadPercent = e.ProgressPercentage;
             OnPropertyChanged(nameof(DownloadPercent));
             time = DateTime.Now;
         }

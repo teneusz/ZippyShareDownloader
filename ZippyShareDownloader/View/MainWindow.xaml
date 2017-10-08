@@ -33,13 +33,14 @@
                 <DataGridTextColumn Header="Service Link" Binding="{Binding ServiceLink}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Download Link" Binding="{Binding DownloadLink}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True"/>
-                <DataGridTemplateColumn Header="Progress">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <ProgressBar Maximum="100" Minimum="0" Value="{Binding DownloadPercent}"/>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Progress" Binding="{Binding DownloadPercent}" IsReadOnly="True"/>
+<!--                <DataGridTemplateColumn Header="Progress">-->
+<!--                    <DataGridTemplateColumn.CellTemplate>-->
+<!--                        <DataTemplate>-->
+<!--                            <ProgressBar Maximum="100" Minimum="0"  Value="{Binding Path=DownloadPercent, Mode=OneWay, Delay=1000}"/>-->
+<!--                        </DataTemplate>-->
+<!--                    </DataGridTemplateColumn.CellTemplate>-->
+<!--                </DataGridTemplateColumn>-->
             </DataGrid.Columns>
         </DataGrid>
 
