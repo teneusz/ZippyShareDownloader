@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Net;
+using System.Text.RegularExpressions;
 using log4net;
+using ZippyShareDownloader.util;
 using Expression = NCalc.Expression;
 
 namespace ZippyShareDownloader.Html.Cutter
 {
     public class HtmlCutterZippyShare : IHtmlLinkCutter
     {
+        private static readonly string JS_FORMAT =
+            @"function download(){{{0} {1}}}";
 
         private static readonly ILog log = LogManager.GetLogger(typeof(HtmlCutterZippyShare));
+
         public string GetDirectLinkFromLink(string link)
         {
-            
             log.Debug("start -- GetDirectionLinkFromLink(string)");
             log.Debug("link = " + link);
             var prefix = "";
@@ -33,29 +37,34 @@ namespace ZippyShareDownloader.Html.Cutter
             return GetDirectLinkFromLink(htmlCode, prefix);
         }
 
-        private static string GetDirectLinkFromLink(string htmlCode, string prefix)
+        private string GetDirectLinkFromLink(string htmlCode, string prefix)
         {
             log.Debug("start -- GetDirectLinkFromLink(string,string)");
             log.Debug(htmlCode);
             log.Debug(prefix);
-            var link = htmlCode;
-            link = link.Remove(0,
-                link.IndexOf("document.getElementById('dlbutton').href = ", StringComparison.Ordinal));
-            link = link.Remove(0, link.IndexOf("/", StringComparison.Ordinal));
-            var count = link.Length - link.IndexOf("\";", StringComparison.Ordinal);
-            link = link.Remove(link.IndexOf("\";", StringComparison.Ordinal), count);
-
-            var mathExpression = link.Remove(0, link.IndexOf('(') + 1);
-            var secondBracket = mathExpression.IndexOf(')');
-            mathExpression = mathExpression.Remove(secondBracket, mathExpression.Length - secondBracket);
-            var expression = new Expression(mathExpression);
-
-
-            link = link.Replace("\" + (" + mathExpression + ") + \"", expression.Evaluate().ToString());
-            log.Debug(prefix + link);
-            log.Debug("start -- GetDirectLinkFromLink(string,string)");
+            var javascriptVariableA = GetVariableA(htmlCode);
+            var javascriptReturnLine = getReturnLine(htmlCode);
+            var jsScript = string.Format(JS_FORMAT, javascriptVariableA, javascriptReturnLine);
+            var link = "";
+            using (ScriptEngine engine = new ScriptEngine("jscript"))
+            {
+                ParsedScript parsed = engine.Parse(jsScript);
+                link = (string) parsed.CallMethod("download");
+            }
 
             return prefix + link;
+        }
+
+        private string getReturnLine(string htmlCode)
+        {
+            var returnLine = Regex.Match(htmlCode, "(document\\.getElementById\\(\'dlbutton\'\\).href = \"\\/d\\/\\S*;)");
+            return returnLine.Success ? "return " + returnLine.Value.Replace("document.getElementById('dlbutton').href = ","") : null;
+        }
+
+        private static string GetVariableA(string htmlCode)
+        {
+            var indexOfVarA = Regex.Match(htmlCode, @"(var a = [\d]{1,}[\S]{1,};)");
+            return indexOfVarA.Success ? indexOfVarA.Value : null;
         }
 
         public string ServiceName { get; } = "ZippyShare";
