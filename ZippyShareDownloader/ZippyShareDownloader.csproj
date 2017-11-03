@@ -68,7 +68,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Html\ServicesEnum.cs" />
     <Compile Include="util\FileUtil.cs" />
+    <Compile Include="util\ScriptEngine.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
     <Page Include="View\AddLinks.xaml">

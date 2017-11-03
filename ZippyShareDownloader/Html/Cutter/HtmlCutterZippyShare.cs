@@ -3,8 +3,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using log4net;
+using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.util;
-using Expression = NCalc.Expression;
 
 namespace ZippyShareDownloader.Html.Cutter
 {
@@ -14,59 +14,95 @@ namespace ZippyShareDownloader.Html.Cutter
             @"function download(){{{0} {1}}}";
 
         private static readonly ILog log = LogManager.GetLogger(typeof(HtmlCutterZippyShare));
+        private string _link;
+        private string _htmlCode;
+        private string _prefix;
+        private string _directLink;
+        private string _fileName;
+        private long? _fileSize;
 
-        public string GetDirectLinkFromLink(string link)
+        private void DownloadPage()
         {
-            log.Debug("start -- GetDirectionLinkFromLink(string)");
-            log.Debug("link = " + link);
-            var prefix = "";
-            var htmlCode = link;
-            if (!link.StartsWith("http"))
+            var htmlCode = _link;
+            if (!_link.StartsWith("http"))
             {
-                htmlCode = "http://" + link;
+                htmlCode = "http://" + _link;
             }
-            prefix = htmlCode.Substring(0, htmlCode.IndexOf(".com", StringComparison.Ordinal) + 4);
+            _prefix = htmlCode.Substring(0, htmlCode.IndexOf(".com", StringComparison.Ordinal) + 4);
             using (var client = new WebClient())
             {
-                if (link.Length > 0)
+                if (_link.Length > 0)
                 {
-                    htmlCode = client.DownloadString(htmlCode);
+                    _htmlCode = client.DownloadString(htmlCode);
                 }
             }
-            log.Debug("end -- GetDirectionLinkFromLink(string)");
-            return GetDirectLinkFromLink(htmlCode, prefix);
         }
 
-        private string GetDirectLinkFromLink(string htmlCode, string prefix)
+        public string GetDirectLink()
         {
-            log.Debug("start -- GetDirectLinkFromLink(string,string)");
-            log.Debug(htmlCode);
-            log.Debug(prefix);
-            var javascriptVariableA = GetVariableA(htmlCode);
-            var javascriptReturnLine = getReturnLine(htmlCode);
+            return _directLink;
+        }
+
+        public string GetFileName()
+        {
+            return _fileName;
+        }
+
+        public long? GetFileSize()
+        {
+            return _fileSize;
+        }
+
+        private void GetDirectLinkFromLink()
+        {
+            var javascriptVariableA = GetVariableA();
+            var javascriptReturnLine = GetReturnLine();
             var jsScript = string.Format(JS_FORMAT, javascriptVariableA, javascriptReturnLine);
             var link = "";
-            using (ScriptEngine engine = new ScriptEngine("jscript"))
+            using (var engine = new ScriptEngine("jscript"))
             {
-                ParsedScript parsed = engine.Parse(jsScript);
+                var parsed = engine.Parse(jsScript);
                 link = (string) parsed.CallMethod("download");
             }
 
-            return prefix + link;
+            _directLink = _prefix + link;
         }
 
-        private string getReturnLine(string htmlCode)
+        private string GetReturnLine()
         {
-            var returnLine = Regex.Match(htmlCode, "(document\\.getElementById\\(\'dlbutton\'\\).href = \"\\/d\\/\\S*;)");
-            return returnLine.Success ? "return " + returnLine.Value.Replace("document.getElementById('dlbutton').href = ","") : null;
+            var returnLine = Regex.Match(_htmlCode,
+                "(document\\.getElementById\\(\'dlbutton\'\\).href = \"\\/d\\/\\S*;)");
+            return returnLine.Success
+                ? "return " + returnLine.Value.Replace("document.getElementById('dlbutton').href = ", "")
+                : null;
         }
 
-        private static string GetVariableA(string htmlCode)
+        private string GetVariableA()
         {
-            var indexOfVarA = Regex.Match(htmlCode, @"(var a = [\d]{1,}[\S]{1,};)");
+            var indexOfVarA = Regex.Match(_htmlCode, @"(var a = [\d]{1,}[\S]{1,};)");
             return indexOfVarA.Success ? indexOfVarA.Value : null;
         }
 
         public string ServiceName { get; } = "ZippyShare";
+
+        public void Initialize(string link)
+        {
+            _link = link;
+            DownloadPage();
+            GetDirectLinkFromLink();
+            ProcessFileName();
+            ProcessFileSize();
+        }
+
+        private void ProcessFileSize()
+        {
+            _fileSize = null;
+        }
+
+        private void ProcessFileName()
+        {
+            var returnLine = Regex.Match(_directLink, "[^\\/]{1,}$");
+            _fileName = returnLine.Success ? returnLine.Value : null;
+        }
     }
 }
