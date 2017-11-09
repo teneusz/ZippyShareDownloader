@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using log4net;
 using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.Html;
+using ZippyShareDownloader.util;
 
 namespace ZippyShareDownloader.View
 {
@@ -35,6 +36,7 @@ namespace ZippyShareDownloader.View
             Log.Debug("start -- saveOnClick");
             var textRange = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
             var tab = textRange.Text.Split('\n').Select(link => link.Trim()).ToList();
+            var list = new List<DownloadEntity>();
 
             foreach (var s in tab)
             {
@@ -44,7 +46,11 @@ namespace ZippyShareDownloader.View
                     link = HtmlFactory.Http + s;
                 }
                 if (s.Length > 0)
-                    _viewModel.Downloads.Add(new DownloadEntity {ServiceLink = link});
+                {
+                    var dream = new DownloadEntity {ServiceLink = link};
+                    _viewModel.Downloads.Add(dream);
+                    list.Add(dream);
+                }
             }
             DialogResult = true;
             Log.Debug("end -- saveOnClick");

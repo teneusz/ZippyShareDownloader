@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Entity;
+using ZippyShareDownloader.util;
 
 namespace ZippyShareDownloader.View
 {

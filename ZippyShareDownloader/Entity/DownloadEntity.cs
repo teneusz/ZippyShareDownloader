@@ -2,24 +2,35 @@
 using System.ComponentModel;
 using System.Net;
 using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Html;
 using ZippyShareDownloader.util;
 
 namespace ZippyShareDownloader.Entity
 {
+    [Serializable]
     public class DownloadEntity : INotifyPropertyChanged
     {
         public string ServiceLink { get; set; }
-
+        [JsonIgnore]
         public string DownloadLink { get; set; }
         public string FileName { get; set; }
         public string ServiceName { get; set; }
+        [JsonIgnore]
         public int DownloadPercent { get; set; } = 0;
+        [JsonIgnore]
+        public bool SaveToFile { get; set; } = true;
+        [JsonIgnore]
         public Action<object> AfterDownload { get; set; }
 
         private string _fileLocation = "";
         public DownloadStatus Status { get; set; } = DownloadStatus.Preparing;
+
+        public DownloadEntity()
+        {
+            //Default constructor required for serialize
+        }
 
         public void StartDownload(string saveLocation)
         {
@@ -47,7 +58,6 @@ namespace ZippyShareDownloader.Entity
             else
             {
                 CheckIfFileIsDownloadedSuccesful();
-                
             }
             OnPropertyChanged(nameof(DownloadPercent));
             OnPropertyChanged(nameof(Status));
@@ -71,7 +81,6 @@ namespace ZippyShareDownloader.Entity
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            
             if ((DateTime.Now - time) < TimeSpan.FromMilliseconds(1000)) return;
             DownloadPercent = e.ProgressPercentage;
             OnPropertyChanged(nameof(DownloadPercent));

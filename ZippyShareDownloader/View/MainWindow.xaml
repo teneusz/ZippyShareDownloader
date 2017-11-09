@@ -28,6 +28,7 @@
         <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
                   ItemsSource="{Binding Downloads}">
             <DataGrid.Columns>
+                <DataGridCheckBoxColumn  Header="Save" Binding="{Binding SaveToFile}"/>
                 <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" />
                 <DataGridTextColumn Header="Service Name" Binding="{Binding ServiceName}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Service Link" Binding="{Binding ServiceLink}" IsReadOnly="True"/>
