@@ -71,16 +71,16 @@ namespace ZippyShareDownloader.Html.Cutter
         private string GetReturnLine()
         {
             var returnLine = Regex.Match(_htmlCode,
-                "(document\\.getElementById\\(\'dlbutton\'\\).href = \"\\/d\\/\\S*;)");
+                "(document\\.getElementById\\(\'dlbutton\'\\).href.+;)");
             return returnLine.Success
                 ? "return " + returnLine.Value.Replace("document.getElementById('dlbutton').href = ", "")
-                : null;
+                : "";
         }
 
         private string GetVariableA()
         {
             var indexOfVarA = Regex.Match(_htmlCode, @"(var a = [\d]{1,}[\S]{1,};)");
-            return indexOfVarA.Success ? indexOfVarA.Value : null;
+            return indexOfVarA.Success ? indexOfVarA.Value : "";
         }
 
         public string ServiceName { get; } = "ZippyShare";
@@ -92,6 +92,8 @@ namespace ZippyShareDownloader.Html.Cutter
             GetDirectLinkFromLink();
             ProcessFileName();
             ProcessFileSize();
+            log.Debug(this.ToString());
+            log.Info(this.ToString());
         }
 
         private void ProcessFileSize()
@@ -102,7 +104,19 @@ namespace ZippyShareDownloader.Html.Cutter
         private void ProcessFileName()
         {
             var returnLine = Regex.Match(_directLink, "[^\\/]{1,}$");
-            _fileName = returnLine.Success ? returnLine.Value : null;
+            var result = returnLine.Success ? returnLine.Value : null;
+            _fileName = result;
+        }
+
+        public override string ToString()
+        {
+            return "HtmlCutterZippyShare[" +
+                   "_link = " + _link + "," +
+                   "_htmlCode = " + _htmlCode + "," +
+                   "_prefix = " + _prefix + "," +
+                   "_directLink = " + _directLink + "," +
+                   "_fileName = " + _fileName + "," +
+                   "]";
         }
     }
 }

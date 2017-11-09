@@ -33,7 +33,7 @@ namespace ZippyShareDownloader
 
         public MainWindow()
         {
-            //XmlConfigurator.Configure(new System.IO.FileInfo("log4net.config"));
+            log4net.Config.XmlConfigurator.Configure();
             InitializeComponent();
             this.DataContext = _viewModel;
         }

@@ -29,9 +29,10 @@ namespace ZippyShareDownloader.Entity
             using (var wc = new WebClient())
             {
                 Status = DownloadStatus.Downloading;
-                //wc.DownloadProgressChanged += OnDownloadProgressChanged;
+                wc.DownloadProgressChanged += OnDownloadProgressChanged;
                 wc.DownloadFileCompleted += OnDownloadFileCompleted;
                 wc.DownloadFileAsync(new System.Uri(DownloadLink), _fileLocation);
+                wc.Proxy = null;
                 OnPropertyChanged(nameof(Status));
             }
         }
