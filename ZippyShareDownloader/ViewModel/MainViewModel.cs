@@ -90,6 +90,7 @@ namespace ZippyShareDownloader.View
         {
             _downloadingCount--;
             Download(null);
+            SerializerUtils.SaveDownloadEntities(_downloads.ToList());
         }
 
         public void AddLinks(object obj)

@@ -53,6 +53,7 @@ namespace ZippyShareDownloader.View
                 }
             }
             DialogResult = true;
+            SerializerUtils.SaveDownloadEntities(list);
             Log.Debug("end -- saveOnClick");
         }
 

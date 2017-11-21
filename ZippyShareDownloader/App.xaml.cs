@@ -22,14 +22,13 @@ namespace ZippyShareDownloader
         private void App_OnExit(object sender, ExitEventArgs e)
         {
             List<DownloadEntity> entities = _viewModel.Downloads.Where(entity => entity.SaveToFile).ToList();
-            SerializerUtils.WriteToJsonFile("configs.json", entities);
+            SerializerUtils.SaveDownloadEntities(entities);
         }
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            if (File.Exists("configs.json"))
-                foreach (var entity in SerializerUtils.ReadFromJsonFile<List<DownloadEntity>>("configs.json"))
-                    _viewModel.Downloads.Add(entity);
+            foreach (var entity in SerializerUtils.LoadDownloadEntities())
+                _viewModel.Downloads.Add(entity);
         }
     }
 }

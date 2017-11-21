@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Security.Policy;
 using System.Web;
 using log4net;
+using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Entity;
 
 namespace ZippyShareDownloader.Html
@@ -27,7 +28,7 @@ namespace ZippyShareDownloader.Html
         }
 
 
-        public static (string service, string parsedLink, string fileName) ParseLink(string link)
+        public static (string service, string parsedLink, string fileName) ParseLink([NotNull]string link)
         {
             Log.Debug("start -- ParseLink(string)");
             Log.Debug("link = "+link);
@@ -40,7 +41,7 @@ namespace ZippyShareDownloader.Html
             return (service, parsedLink, fileName);
         }
 
-        private static string GetFileName(string link)
+        private static string GetFileName([NotNull]string link)
         {
             Log.Debug("start -- GetFileName(String)");
             Log.Debug("link = " + link);
@@ -49,11 +50,13 @@ namespace ZippyShareDownloader.Html
             return link.Substring(lastSlashIndex, link.Length - lastSlashIndex);
         }
 
-        private static string GetService(string link)
+        private static string GetService([NotNull]string link)
         {
             Log.Debug("start -- GetService(String)");
             Log.Debug("link = "+link);
             var result = "";
+            if (link == null) throw new ArgumentNullException();
+
             if (link.ToLower().Contains(Http))
             {
                 result = link.Replace(Http, "");
