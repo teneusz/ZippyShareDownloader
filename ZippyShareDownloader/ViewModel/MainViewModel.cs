@@ -59,6 +59,9 @@ namespace ZippyShareDownloader.View
         public ICommand AddLinksCommand { get; set; }
         public ICommand DownloadCommand { get; set; }
         public ICommand AboutCommand { get; set; }
+        public ICommand UncheckAllCommand { get; }
+        public ICommand SettingsCommand { get; set; }
+        public ICommand ClearListCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -74,6 +77,9 @@ namespace ZippyShareDownloader.View
             AddLinksCommand = new RelayCommand(AddLinks);
             AboutCommand = new RelayCommand(About);
             DownloadCommand = new RelayCommand(Download);
+            SettingsCommand = new RelayCommand(SettingsWindow);
+            UncheckAllCommand = new RelayCommand(UncheckAll);
+            ClearListCommand = new RelayCommand(ClearList);
         }
 
         public void Download(object obj)
@@ -99,8 +105,35 @@ namespace ZippyShareDownloader.View
             window.ShowDialog();
         }
 
+        public void SettingsWindow(object obj)
+        {
+            var window = new SettingsWindow();
+            window.ShowDialog();
+        }
+
         public void About(object obj)
         {
+        }
+
+        public void UncheckAll(object obj)
+        {
+            foreach (var entity in _downloads)
+            {
+                entity.SaveToFile = false;
+            }
+        }
+
+        public void ClearList(object obj)
+        {
+
+            foreach (var entity in _downloads.ToList())
+            {
+                if (!entity.Status.Equals(DownloadStatus.Downloading))
+                {
+                    _downloads.Remove(entity);
+                }
+            }
+            SerializerUtils.SaveDownloadEntities(_downloads.ToList());
         }
 
         public void Exit(object obj)

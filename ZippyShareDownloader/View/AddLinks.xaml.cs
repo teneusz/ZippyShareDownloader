@@ -47,7 +47,12 @@ namespace ZippyShareDownloader.View
                 }
                 if (s.Length > 0)
                 {
-                    var dream = new DownloadEntity {ServiceLink = link};
+                    var dream = new DownloadEntity
+                    {
+                        ServiceLink = link,
+                        IsInGroup = IsInGroup.IsChecked,
+                        Group = GroupName.Text
+                    };
                     _viewModel.Downloads.Add(dream);
                     list.Add(dream);
                 }

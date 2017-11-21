@@ -16,20 +16,26 @@
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
+                <MenuItem Header="Settings" Command="{Binding SettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="Download">
                 <MenuItem Header="Add links" Command="{Binding AddLinksCommand}"/>
                 <MenuItem Header="Start download" Command="{Binding DownloadCommand}"/>
+            </MenuItem>
+            <MenuItem Header="View">
+                <MenuItem Header="Clear list" Command="{Binding ClearListCommand}"/>
+                <MenuItem Header="Uncheck all" Command="{Binding UncheckAllCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
         <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
-                  ItemsSource="{Binding Downloads}" SelectionUnit="Cell" >
+                  ItemsSource="{Binding Downloads}" SelectionUnit="Cell" CanUserAddRows="false">
             <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Save" Binding="{Binding SaveToFile}"/>
                 <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" />
+                <DataGridTextColumn Header="Group Name" Binding="{Binding Group}" />
                 <DataGridTextColumn Header="Service Name" Binding="{Binding ServiceName}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Service Link" Binding="{Binding ServiceLink}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Download Link" Binding="{Binding DownloadLink}" IsReadOnly="True"/>

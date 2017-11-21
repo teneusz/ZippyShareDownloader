@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
@@ -13,16 +14,24 @@ namespace ZippyShareDownloader.Entity
     public class DownloadEntity : INotifyPropertyChanged
     {
         public string ServiceLink { get; set; }
+
         [JsonIgnore]
         public string DownloadLink { get; set; }
+
         public string FileName { get; set; }
         public string ServiceName { get; set; }
+
         [JsonIgnore]
         public int DownloadPercent { get; set; } = 0;
+
         [JsonIgnore]
         public bool SaveToFile { get; set; } = true;
+
         [JsonIgnore]
         public Action<object> AfterDownload { get; set; }
+
+        public string Group { get; set; }
+        public bool? IsInGroup { get; set; }
 
         private string _fileLocation = "";
         public DownloadStatus Status { get; set; } = DownloadStatus.Preparing;
@@ -34,18 +43,38 @@ namespace ZippyShareDownloader.Entity
 
         public void StartDownload(string saveLocation)
         {
-            _fileLocation = saveLocation + FileName;
-            PrepareToDownload();
-            time = DateTime.Now;
-            using (var wc = new WebClient())
+            ProcessFileLocation(saveLocation);
+            try
             {
-                Status = DownloadStatus.Downloading;
-                wc.DownloadProgressChanged += OnDownloadProgressChanged;
-                wc.DownloadFileCompleted += OnDownloadFileCompleted;
-                wc.DownloadFileAsync(new System.Uri(DownloadLink), _fileLocation);
-                wc.Proxy = null;
-                OnPropertyChanged(nameof(Status));
+                PrepareToDownload();
+                time = DateTime.Now;
+                using (var wc = new WebClient())
+                {
+                    Status = DownloadStatus.Downloading;
+                    wc.DownloadProgressChanged += OnDownloadProgressChanged;
+                    wc.DownloadFileCompleted += OnDownloadFileCompleted;
+                    wc.DownloadFileAsync(new System.Uri(DownloadLink), _fileLocation);
+                    wc.Proxy = null;
+                    OnPropertyChanged(nameof(Status));
+                }
             }
+            catch (ArgumentNullException ex)
+            {
+                Status = DownloadStatus.Error;
+            }
+        }
+
+        private void ProcessFileLocation(string saveLocation)
+        {
+            if (IsInGroup.HasValue && IsInGroup.Value && Group != null && Group?.Length > 0)
+            {
+                _fileLocation = saveLocation + Group;
+                if (!Directory.Exists(_fileLocation))
+                    Directory.CreateDirectory(_fileLocation);
+                _fileLocation += "\\" + FileName;
+            }
+            else
+                _fileLocation = saveLocation + FileName;
         }
 
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)

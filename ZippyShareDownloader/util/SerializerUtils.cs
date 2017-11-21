@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
+using ZippyShareDownloader.Entity;
 
 namespace ZippyShareDownloader.util
 {
@@ -43,7 +44,7 @@ namespace ZippyShareDownloader.util
             using (Stream stream = File.Open(filePath, FileMode.Open))
             {
                 var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
-                return (T)binaryFormatter.Deserialize(stream);
+                return (T) binaryFormatter.Deserialize(stream);
             }
         }
 
@@ -86,7 +87,7 @@ namespace ZippyShareDownloader.util
             {
                 var serializer = new XmlSerializer(typeof(T));
                 reader = new StreamReader(filePath);
-                return (T)serializer.Deserialize(reader);
+                return (T) serializer.Deserialize(reader);
             }
             finally
             {
@@ -115,8 +116,7 @@ namespace ZippyShareDownloader.util
             }
             finally
             {
-                
-                    writer?.Close();
+                writer?.Close();
             }
         }
 
@@ -140,6 +140,20 @@ namespace ZippyShareDownloader.util
             {
                 reader?.Close();
             }
+        }
+
+        public static void SaveDownloadEntities(List<DownloadEntity> entities)
+        {
+            WriteToJsonFile("configs.json", entities);
+        }
+
+        public static List<DownloadEntity> LoadDownloadEntities()
+        {
+            if (!File.Exists("configs.json")) return new List<DownloadEntity>();
+            var result = ReadFromJsonFile<List<DownloadEntity>>("configs.json");
+            result.ForEach(e =>
+                e.Status = e.Status == DownloadStatus.Downloading ? DownloadStatus.Preparing : e.Status);
+            return result;
         }
     }
 }

@@ -7,9 +7,16 @@
         mc:Ignorable="d"
         Title="AddLinks" Height="300" Width="300">
     <Grid Margin="0,0,-0.4,-4.6">
-        <RichTextBox Margin="10,10,9,36" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" x:Name="TextBox"/>
-        <Button Click="SaveOnClick" Content="Add" Margin="10,0,209,11" Height="19" VerticalAlignment="Bottom"/>
-        <Button Click="CancelOnClick" Content="Cancel" HorizontalAlignment="Left" Margin="90,0,0,11" Width="75" Height="19" VerticalAlignment="Bottom"/>
-
+        <RichTextBox Margin="10,10,9,64" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                     x:Name="TextBox" />
+        <UniformGrid Margin="11,0,41,10" Height="49" VerticalAlignment="Bottom">
+            <CheckBox Content="Dodaj jako grupa" VerticalAlignment="Top" HorizontalAlignment="Left"
+                      Width="111" x:Name="IsInGroup" />
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding ElementName=IsInGroup, Path=IsChecked}"  />
+            <Button Click="SaveOnClick" Content="Add" Height="19" VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left" Width="75" />
+            <Button Click="CancelOnClick" Content="Cancel" HorizontalAlignment="Left" Width="75"
+                    Height="19" VerticalAlignment="Bottom" />
+        </UniformGrid>
     </Grid>
 </Window>
