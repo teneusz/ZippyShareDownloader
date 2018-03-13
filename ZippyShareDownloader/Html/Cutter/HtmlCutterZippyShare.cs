@@ -11,7 +11,7 @@ namespace ZippyShareDownloader.Html.Cutter
     public class HtmlCutterZippyShare : IHtmlLinkCutter
     {
         private static readonly string JS_FORMAT =
-            @"function download(){{{0} {1}}}";
+            @"function download(){{var zippyObj={{}}; var dummy = undefined; {0} return zippyObj.href;}}";
 
         private static readonly ILog log = LogManager.GetLogger(typeof(HtmlCutterZippyShare));
         private string _link;
@@ -55,14 +55,14 @@ namespace ZippyShareDownloader.Html.Cutter
 
         private void GetDirectLinkFromLink()
         {
-            var javascriptVariableA = GetVariableA();
-            var javascriptReturnLine = GetReturnLine();
-            var jsScript = string.Format(JS_FORMAT, javascriptVariableA, javascriptReturnLine);
+            var js = GetVariableA().Replace("document.getElementById('dlbutton')", "zippyObj").Replace("document.getElementById('fimage')", "dummy");
+            
+            var jsScript = string.Format(JS_FORMAT, js);
             var link = "";
             using (var engine = new ScriptEngine("jscript"))
             {
                 var parsed = engine.Parse(jsScript);
-                link = (string) parsed.CallMethod("download");
+                link = (string)parsed.CallMethod("download");
             }
 
             _directLink = _prefix + link;
@@ -79,8 +79,16 @@ namespace ZippyShareDownloader.Html.Cutter
 
         private string GetVariableA()
         {
-            var indexOfVarA = Regex.Match(_htmlCode, @"(var a = [\d]{1,}[\S]{1,};)");
-            return indexOfVarA.Success ? indexOfVarA.Value : "";
+            var script = Regex.Matches(_htmlCode, "(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))");
+            foreach (Match temp in script)
+            {
+                if (temp.Value.Contains("dlbutton"))
+                {
+                    return temp.Value;
+                }
+            }
+
+            return "";
         }
 
         public string ServiceName { get; } = "ZippyShare";
