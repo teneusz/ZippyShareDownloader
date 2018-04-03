@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
+using log4net;
 using Newtonsoft.Json;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Html;
@@ -22,7 +24,7 @@ namespace ZippyShareDownloader.Entity
         public string ServiceName { get; set; }
 
         [JsonIgnore]
-        public int DownloadPercent { get; set; } = 0;
+        public int DownloadPercent { get; set; }
 
         [JsonIgnore]
         public bool SaveToFile { get; set; } = true;
@@ -35,7 +37,8 @@ namespace ZippyShareDownloader.Entity
 
         private string _fileLocation = "";
         public DownloadStatus Status { get; set; } = DownloadStatus.Preparing;
-
+        [JsonIgnore]
+        private static readonly ILog Log = LogManager.GetLogger(typeof(HtmlFactory));
         public DownloadEntity()
         {
             //Default constructor required for serialize
@@ -47,13 +50,13 @@ namespace ZippyShareDownloader.Entity
             try
             {
                 PrepareToDownload();
-                time = DateTime.Now;
+                _time = DateTime.Now;
                 using (var wc = new WebClient())
                 {
                     Status = DownloadStatus.Downloading;
                     wc.DownloadProgressChanged += OnDownloadProgressChanged;
                     wc.DownloadFileCompleted += OnDownloadFileCompleted;
-                    wc.DownloadFileAsync(new System.Uri(DownloadLink), _fileLocation);
+                    wc.DownloadFileAsync(new Uri(DownloadLink), _fileLocation);
                     wc.Proxy = null;
                     OnPropertyChanged(nameof(Status));
                 }
@@ -61,6 +64,8 @@ namespace ZippyShareDownloader.Entity
             catch (ArgumentNullException ex)
             {
                 Status = DownloadStatus.Error;
+                Log.Debug("Error while starting a download process.", ex);
+                Log.Debug(ToString());
             }
         }
 
@@ -79,10 +84,19 @@ namespace ZippyShareDownloader.Entity
 
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Cancelled)
+            if (e.Error != null)
             {
                 Status = DownloadStatus.Error;
                 DownloadPercent = 0;
+                Log.Debug("Error while downloading",e.Error);
+                Log.Debug(ToString());
+            }
+            else if (e.Cancelled)
+            {
+                Status = DownloadStatus.Canceled;
+                DownloadPercent = 0;
+                Log.Debug("Download has been canceld.");
+                Log.Debug(ToString());
             }
             else
             {
@@ -110,13 +124,13 @@ namespace ZippyShareDownloader.Entity
 
         private void OnDownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            if ((DateTime.Now - time) < TimeSpan.FromMilliseconds(1000)) return;
+            if ((DateTime.Now - _time) < TimeSpan.FromMilliseconds(1000)) return;
             DownloadPercent = e.ProgressPercentage;
             OnPropertyChanged(nameof(DownloadPercent));
-            time = DateTime.Now;
+            _time = DateTime.Now;
         }
 
-        private DateTime time;
+        private DateTime _time;
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -137,6 +151,17 @@ namespace ZippyShareDownloader.Entity
             Status = DownloadStatus.NotDownloading;
             OnPropertyChanged(nameof(Status));
         }
+
+        public override string ToString()
+        {
+            return new StringBuilder("{")
+                .Append('\n')
+                .Append("ServiceLink = '").Append(ServiceLink).Append("',").Append('\n')
+                .Append("DownloadLink = '").Append(DownloadLink).Append("',").Append('\n')
+                .Append("FileName = '").Append(FileName).Append("',").Append('\n')
+                .Append("ServiceName = '").Append(ServiceName).Append("',").Append('\n')
+                .ToString();
+        }
     }
 
     public enum DownloadStatus
@@ -145,6 +170,7 @@ namespace ZippyShareDownloader.Entity
         NotDownloading,
         Downloading,
         Completed,
+        Canceled,
         Error
     }
 }

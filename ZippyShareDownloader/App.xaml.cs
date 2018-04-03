@@ -17,7 +17,7 @@ namespace ZippyShareDownloader
     /// </summary>
     public partial class App : Application
     {
-        private MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
+        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
 
         private void App_OnExit(object sender, ExitEventArgs e)
         {

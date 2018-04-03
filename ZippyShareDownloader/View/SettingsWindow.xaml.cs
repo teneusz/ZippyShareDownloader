@@ -19,9 +19,11 @@ namespace ZippyShareDownloader.View
     /// </summary>
     public partial class SettingsWindow : Window
     {
+        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
         public SettingsWindow()
         {
             InitializeComponent();
+            DataContext = _viewModel;
         }
     }
 }

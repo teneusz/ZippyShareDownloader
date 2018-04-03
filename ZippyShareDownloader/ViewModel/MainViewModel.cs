@@ -1,16 +1,18 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.util;
+using Application = System.Windows.Application;
 
 namespace ZippyShareDownloader.View
 {
@@ -30,15 +32,14 @@ namespace ZippyShareDownloader.View
             }
         }
 
-        private string _downloadLocation = "D:\\Downloads\\";
-
         public string DownloadLocation
         {
-            get => _downloadLocation;
+            get => Properties.Settings.Default.downloadPath;
             set
             {
-                _downloadLocation = value;
-                OnPropertyChanged(nameof(Downloads));
+                Properties.Settings.Default.downloadPath = value;
+                Properties.Settings.Default.Save(); // TODO: move to another place
+                OnPropertyChanged(nameof(DownloadLocation));
             }
         }
 
@@ -62,6 +63,7 @@ namespace ZippyShareDownloader.View
         public ICommand UncheckAllCommand { get; }
         public ICommand SettingsCommand { get; set; }
         public ICommand ClearListCommand { get; }
+        public ICommand SaveDownloadPathCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -80,6 +82,7 @@ namespace ZippyShareDownloader.View
             SettingsCommand = new RelayCommand(SettingsWindow);
             UncheckAllCommand = new RelayCommand(UncheckAll);
             ClearListCommand = new RelayCommand(ClearList);
+            SaveDownloadPathCommand = new RelayCommand(SaveDownloadPath);
         }
 
         public void Download(object obj)
@@ -90,6 +93,15 @@ namespace ZippyShareDownloader.View
             first.AfterDownload = AfterDownload;
             first.StartDownload(DownloadLocation);
             _downloadingCount++;
+        }
+
+        public void SaveDownloadPath(object obj)
+        {
+            var dialog = new FolderBrowserDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                DownloadLocation = dialog.SelectedPath + @"\";
+            }
         }
 
         public void AfterDownload(object obj)

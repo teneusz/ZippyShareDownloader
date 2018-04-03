@@ -7,6 +7,9 @@
         mc:Ignorable="d"
         Title="SettingsWindow" Height="300" Width="300">
     <Grid>
-        
+        <Label Content="Download Path" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+        <TextBox Height="23" Margin="10,40,36.6,0" TextWrapping="Wrap" Text="{Binding Path=DownloadLocation}" VerticalAlignment="Top"/>
+        <Button Content="..." HorizontalAlignment="Right" Margin="0,40,9.6,0" VerticalAlignment="Top" Width="22" Height="23"  Command="{Binding SaveDownloadPathCommand}"/>
+
     </Grid>
 </Window>

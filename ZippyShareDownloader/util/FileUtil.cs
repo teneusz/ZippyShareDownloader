@@ -24,7 +24,7 @@ namespace ZippyShareDownloader.util
             System.UInt32 dwReserverd
         );
 
-        public static string getMimeFromFile(string filename)
+        public static string GetMimeFromFile(string filename)
         {
             if (!File.Exists(filename))
                 throw new FileNotFoundException(filename + " not found");
@@ -56,7 +56,7 @@ namespace ZippyShareDownloader.util
         {
             try
             {
-                return getMimeFromFile(filePath).Equals(MimeMapping.GetMimeMapping(filePath));
+                return GetMimeFromFile(filePath).Equals(MimeMapping.GetMimeMapping(filePath));
             }
             catch (Exception e)
             {

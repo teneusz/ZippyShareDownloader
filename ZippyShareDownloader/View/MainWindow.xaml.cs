@@ -1,36 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using log4net.Config;
-using ZippyShareDownloader.Entity;
-using ZippyShareDownloader.Html.Cutter;
 using ZippyShareDownloader.View;
 
 namespace ZippyShareDownloader
 {
+    /// <inheritdoc>
+    ///     <cref></cref>
+    /// </inheritdoc>
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-       private MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
+       private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
 
         public MainWindow()
         {
@@ -40,16 +24,16 @@ namespace ZippyShareDownloader
 
     }
 
-    public class ObservableCollectionEx<T> : ObservableCollection<T> where T : INotifyPropertyChanged
+    public sealed class ObservableCollectionEx<T> : ObservableCollection<T> where T : INotifyPropertyChanged
     {
         // this collection also reacts to changes in its components' properties
 
-        public ObservableCollectionEx() : base()
+        public ObservableCollectionEx()
         {
-            this.CollectionChanged += new System.Collections.Specialized.NotifyCollectionChangedEventHandler(ObservableCollectionEx_CollectionChanged);
+            CollectionChanged += ObservableCollectionEx_CollectionChanged;
         }
 
-        void ObservableCollectionEx_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void ObservableCollectionEx_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {

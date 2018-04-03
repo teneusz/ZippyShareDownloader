@@ -68,15 +68,6 @@ namespace ZippyShareDownloader.Html.Cutter
             _directLink = _prefix + link;
         }
 
-        private string GetReturnLine()
-        {
-            var returnLine = Regex.Match(_htmlCode,
-                "(document\\.getElementById\\(\'dlbutton\'\\).href.+;)");
-            return returnLine.Success
-                ? "return " + returnLine.Value.Replace("document.getElementById('dlbutton').href = ", "")
-                : "";
-        }
-
         private string GetVariableA()
         {
             var script = Regex.Matches(_htmlCode, "(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))");
