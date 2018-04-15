@@ -10,11 +10,13 @@ namespace ZippyShareDownloader.Html
     {
         string ServiceName { get;}
 
-        string GetDirectLink();
+        string DirectLink { get; }
 
-        string GetFileName();
+        string FileName { get; }
 
-        long? GetFileSize();
+        long? FileSize { get; }
+
+        bool IsFileExist { get; }
 
         void Initialize(string link);
     }

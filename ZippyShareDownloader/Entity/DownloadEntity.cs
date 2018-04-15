@@ -46,10 +46,15 @@ namespace ZippyShareDownloader.Entity
 
         public void StartDownload(string saveLocation)
         {
-            ProcessFileLocation(saveLocation);
             try
             {
                 PrepareToDownload();
+                if (!IsStatusCorrect())
+                {
+                    AfterDownload(null);
+                    return;
+                }
+                ProcessFileLocation(saveLocation);
                 _time = DateTime.Now;
                 using (var wc = new WebClient())
                 {
@@ -61,12 +66,17 @@ namespace ZippyShareDownloader.Entity
                     OnPropertyChanged(nameof(Status));
                 }
             }
-            catch (ArgumentNullException ex)
+            catch (Exception ex)
             {
                 Status = DownloadStatus.Error;
                 Log.Debug("Error while starting a download process.", ex);
                 Log.Debug(ToString());
             }
+        }
+
+        private bool IsStatusCorrect()
+        {
+            return Status == DownloadStatus.NotDownloading;
         }
 
         private void ProcessFileLocation(string saveLocation)
@@ -141,15 +151,22 @@ namespace ZippyShareDownloader.Entity
 
         private void PrepareToDownload()
         {
-            var tuple = HtmlFactory.ParseLink(ServiceLink);
-            ServiceName = tuple.service;
-            OnPropertyChanged(nameof(ServiceName));
-            DownloadLink = tuple.parsedLink;
-            OnPropertyChanged(nameof(DownloadLink));
-            FileName = tuple.fileName;
-            OnPropertyChanged(nameof(FileName));
-            Status = DownloadStatus.NotDownloading;
-            OnPropertyChanged(nameof(Status));
+            var (service, parsedLink, fileName, isFileExist) = HtmlFactory.ParseLink(ServiceLink);
+            if (isFileExist)
+            {
+                ServiceName = service;
+                OnPropertyChanged(nameof(ServiceName));
+                DownloadLink = parsedLink;
+                OnPropertyChanged(nameof(DownloadLink));
+                FileName = fileName;
+                OnPropertyChanged(nameof(FileName));
+                Status = DownloadStatus.NotDownloading;
+                OnPropertyChanged(nameof(Status));
+            }
+            else
+            {
+                Status = DownloadStatus.NotFound;
+            }
         }
 
         public override string ToString()
@@ -171,6 +188,7 @@ namespace ZippyShareDownloader.Entity
         Downloading,
         Completed,
         Canceled,
-        Error
+        Error,
+        NotFound
     }
 }

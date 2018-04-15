@@ -28,17 +28,17 @@ namespace ZippyShareDownloader.Html
         }
 
 
-        public static (string service, string parsedLink, string fileName) ParseLink([NotNull]string link)
+        public static (string service, string parsedLink, string fileName, bool isFileExist) ParseLink([NotNull]string link)
         {
             Log.Debug("start -- ParseLink(string)");
             Log.Debug("link = "+link);
             var service = GetService(link);
             var htmlCutter = ServicesEnum.ValueOf(service).CreateInstace();
             htmlCutter.Initialize(link);
-            var parsedLink = htmlCutter.GetDirectLink();
-            var fileName = htmlCutter.GetFileName();
+            var parsedLink = htmlCutter.DirectLink;
+            var fileName = htmlCutter.FileName;
             Log.Debug("end -- ParseLink(String)");
-            return (service, parsedLink, fileName);
+            return (service, parsedLink, fileName, htmlCutter.IsFileExist);
         }
 
         private static string GetFileName([NotNull]string link)

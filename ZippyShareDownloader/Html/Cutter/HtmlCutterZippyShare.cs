@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
 using log4net;
-using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.util;
 
 namespace ZippyShareDownloader.Html.Cutter
@@ -20,6 +18,7 @@ namespace ZippyShareDownloader.Html.Cutter
         private string _directLink;
         private string _fileName;
         private long? _fileSize;
+        private bool _fileExists;
 
         private void DownloadPage()
         {
@@ -38,20 +37,14 @@ namespace ZippyShareDownloader.Html.Cutter
             }
         }
 
-        public string GetDirectLink()
-        {
-            return _directLink;
-        }
+        public string DirectLink => _directLink;
 
-        public string GetFileName()
-        {
-            return _fileName;
-        }
+        public string FileName => _fileName;
 
-        public long? GetFileSize()
-        {
-            return _fileSize;
-        }
+        public long? FileSize => _fileSize;
+
+        public bool IsFileExist => _fileExists;
+        
 
         private void GetDirectLinkFromLink()
         {
@@ -91,9 +84,12 @@ namespace ZippyShareDownloader.Html.Cutter
             GetDirectLinkFromLink();
             ProcessFileName();
             ProcessFileSize();
+            CheckFileExistnce();
             log.Debug(this.ToString());
             log.Info(this.ToString());
         }
+
+        private void CheckFileExistnce() => _fileExists = !_htmlCode.Contains("File does not exist on this server");
 
         private void ProcessFileSize()
         {
