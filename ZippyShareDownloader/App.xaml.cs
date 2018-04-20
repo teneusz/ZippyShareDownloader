@@ -21,14 +21,42 @@ namespace ZippyShareDownloader
 
         private void App_OnExit(object sender, ExitEventArgs e)
         {
-            List<DownloadEntity> entities = _viewModel.Downloads.Where(entity => entity.SaveToFile).ToList();
-            SerializerUtils.SaveDownloadEntities(entities);
+            ConfigHelper helper = new ConfigHelper
+            {
+                DownloadGroups = _viewModel.DownloadGroups
+            };
+            SerializerUtils.SaveConfig(helper);
         }
 
         private void App_OnStartup(object sender, StartupEventArgs e)
         {
-            foreach (var entity in SerializerUtils.LoadDownloadEntities())
-                _viewModel.Downloads.Add(entity);
+            var helper = SerializerUtils.LoadConfig();
+            foreach (var group in helper.DownloadGroups)
+            {
+                _viewModel.DownloadGroups.Add(group);
+                foreach (var entity in group.DonwloadEntities)
+                {
+                    _viewModel.Downloads.Add(entity);
+                    entity.DownloadGroup = group;
+                }
+            }
+        
+        }
+
+        [Serializable]
+        public class ConfigHelper
+        {
+           
+            private List<DownloadGroup> _downloadGroups = new List<DownloadGroup>();
+            public List<DownloadGroup> DownloadGroups
+            {
+                get => _downloadGroups;
+                set => _downloadGroups = value;
+            }
+
+            public ConfigHelper()
+            {
+            }
         }
     }
 }

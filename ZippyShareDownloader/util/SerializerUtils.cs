@@ -130,29 +130,42 @@ namespace ZippyShareDownloader.util
         public static T ReadFromJsonFile<T>(string filePath) where T : new()
         {
             TextReader reader = null;
+            T result;
             try
             {
                 reader = new StreamReader(filePath);
                 var fileContents = reader.ReadToEnd();
-                return JsonConvert.DeserializeObject<T>(fileContents);
+                result = JsonConvert.DeserializeObject<T>(fileContents);
+            }
+            catch (Exception ex)
+            {
+                result = new T();
             }
             finally
             {
                 reader?.Close();
             }
+
+            return result;
         }
 
-        public static void SaveDownloadEntities(List<DownloadEntity> entities)
+        public static void SaveConfig(App.ConfigHelper entities)
         {
             WriteToJsonFile("configs.json", entities);
         }
 
-        public static List<DownloadEntity> LoadDownloadEntities()
+        public static App.ConfigHelper LoadConfig()
         {
-            if (!File.Exists("configs.json")) return new List<DownloadEntity>();
-            var result = ReadFromJsonFile<List<DownloadEntity>>("configs.json");
-            result.ForEach(e =>
-                e.Status = e.Status == DownloadStatus.Downloading ? DownloadStatus.Preparing : e.Status);
+            if (!File.Exists("configs.json")) return new App.ConfigHelper();
+            var result = ReadFromJsonFile<App.ConfigHelper>("configs.json");
+            result.DownloadGroups.ForEach(group => group.DonwloadEntities.ForEach(entity =>
+                entity.Status =
+                    entity.Status == DownloadStatus.Downloading
+                        ? DownloadStatus.Preparing
+                        : entity.Status
+            ));
+
+
             return result;
         }
     }

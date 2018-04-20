@@ -32,13 +32,19 @@ namespace ZippyShareDownloader.Entity
         [JsonIgnore]
         public Action<object> AfterDownload { get; set; }
 
-        public string Group { get; set; }
-        public bool? IsInGroup { get; set; }
+        public string Group => DownloadGroup?.Name;
+        public bool IsInGroup => DownloadGroup != null;
 
-        private string _fileLocation = "";
+        public string FileLocation
+        {
+            get;
+            set;
+        }
+
+        [JsonIgnore] public DownloadGroup DownloadGroup;
         public DownloadStatus Status { get; set; } = DownloadStatus.Preparing;
         [JsonIgnore]
-        private static readonly ILog Log = LogManager.GetLogger(typeof(HtmlFactory));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(DownloadEntity));
         public DownloadEntity()
         {
             //Default constructor required for serialize
@@ -61,7 +67,7 @@ namespace ZippyShareDownloader.Entity
                     Status = DownloadStatus.Downloading;
                     wc.DownloadProgressChanged += OnDownloadProgressChanged;
                     wc.DownloadFileCompleted += OnDownloadFileCompleted;
-                    wc.DownloadFileAsync(new Uri(DownloadLink), _fileLocation);
+                    wc.DownloadFileAsync(new Uri(DownloadLink), FileLocation);
                     wc.Proxy = null;
                     OnPropertyChanged(nameof(Status));
                 }
@@ -81,15 +87,15 @@ namespace ZippyShareDownloader.Entity
 
         private void ProcessFileLocation(string saveLocation)
         {
-            if (IsInGroup.HasValue && IsInGroup.Value && Group != null && Group?.Length > 0)
+            if (IsInGroup && Group.Length > 0)
             {
-                _fileLocation = saveLocation + Group;
-                if (!Directory.Exists(_fileLocation))
-                    Directory.CreateDirectory(_fileLocation);
-                _fileLocation += "\\" + FileName;
+                FileLocation = saveLocation + Group;
+                if (!Directory.Exists(FileLocation))
+                    Directory.CreateDirectory(FileLocation);
+                FileLocation += "\\" + FileName;
             }
             else
-                _fileLocation = saveLocation + FileName;
+                FileLocation = saveLocation + FileName;
         }
 
         private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
@@ -119,10 +125,11 @@ namespace ZippyShareDownloader.Entity
 
         private void CheckIfFileIsDownloadedSuccesful()
         {
-            if (FileUtil.CheckFileType(_fileLocation))
+            if (FileUtil.CheckFileType(FileLocation))
             {
                 Status = DownloadStatus.Completed;
                 DownloadPercent = 100;
+                DownloadGroup.Refresh();
             }
             else
             {

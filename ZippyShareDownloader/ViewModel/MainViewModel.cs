@@ -21,6 +21,7 @@ namespace ZippyShareDownloader.View
         public static MainViewModel InstatnceMainViewModel = new MainViewModel();
         private int _downloadingCount = 0;
         private ObservableCollectionEx<DownloadEntity> _downloads = new ObservableCollectionEx<DownloadEntity>();
+        public List<DownloadGroup> DownloadGroups = new List<DownloadGroup>();
 
         public ObservableCollectionEx<DownloadEntity> Downloads
         {
@@ -40,6 +41,17 @@ namespace ZippyShareDownloader.View
                 Properties.Settings.Default.downloadPath = value;
                 Properties.Settings.Default.Save(); // TODO: move to another place
                 OnPropertyChanged(nameof(DownloadLocation));
+            }
+        }
+
+        public string SevenZipLibraryLocation
+        {
+            get => Properties.Settings.Default.sevenZipPath;
+            set
+            {
+                Properties.Settings.Default.sevenZipPath = value;
+                Properties.Settings.Default.Save();
+                OnPropertyChanged(nameof(SevenZipLibraryLocation));
             }
         }
 
@@ -64,6 +76,7 @@ namespace ZippyShareDownloader.View
         public ICommand SettingsCommand { get; set; }
         public ICommand ClearListCommand { get; }
         public ICommand SaveDownloadPathCommand { get; }
+        public ICommand SaveSevenZipLibraryPathCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -83,12 +96,14 @@ namespace ZippyShareDownloader.View
             UncheckAllCommand = new RelayCommand(UncheckAll);
             ClearListCommand = new RelayCommand(ClearList);
             SaveDownloadPathCommand = new RelayCommand(SaveDownloadPath);
+            SaveSevenZipLibraryPathCommand = new RelayCommand(SaveSevenZipLibraryPath);
         }
 
         public void Download(object obj)
         {
             if (_downloadingCount > _downloadAmount) return;
-            var first = Downloads.FirstOrDefault(en => en.Status == DownloadStatus.NotDownloading || en.Status == DownloadStatus.Preparing);
+            var first = Downloads.FirstOrDefault(en =>
+                en.Status == DownloadStatus.NotDownloading || en.Status == DownloadStatus.Preparing);
             if (first == null) return;
             first.AfterDownload = AfterDownload;
             first.StartDownload(DownloadLocation);
@@ -104,11 +119,21 @@ namespace ZippyShareDownloader.View
             }
         }
 
+        private void SaveSevenZipLibraryPath(object obj)
+        {
+            var dialog = new System.Windows.Forms.OpenFileDialog();
+            dialog.Filter = "7-z library|7z.dll";
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                SevenZipLibraryLocation = dialog.SafeFileName;
+            }
+        }
+
         public void AfterDownload(object obj)
         {
             _downloadingCount--;
             Download(null);
-            SerializerUtils.SaveDownloadEntities(_downloads.ToList());
+            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
         }
 
         public void AddLinks(object obj)
@@ -137,7 +162,6 @@ namespace ZippyShareDownloader.View
 
         public void ClearList(object obj)
         {
-
             foreach (var entity in _downloads.ToList())
             {
                 if (!entity.Status.Equals(DownloadStatus.Downloading))
@@ -145,7 +169,8 @@ namespace ZippyShareDownloader.View
                     _downloads.Remove(entity);
                 }
             }
-            SerializerUtils.SaveDownloadEntities(_downloads.ToList());
+
+            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
         }
 
         public void Exit(object obj)

@@ -5,18 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZippyShareDownloader.View"
         mc:Ignorable="d"
-        Title="AddLinks" Height="300" Width="300">
+        Title="AddLinks" Height="345.6" Width="300">
     <Grid Margin="0,0,-0.4,-4.6">
-        <RichTextBox Margin="10,10,9,64" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+        <RichTextBox Margin="10,10,9,102.6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
                      x:Name="TextBox" />
-        <UniformGrid Margin="11,0,41,10" Height="49" VerticalAlignment="Bottom">
+        <UniformGrid Margin="10,0,42,9.6" Height="88" VerticalAlignment="Bottom" Rows="3">
             <CheckBox Content="Dodaj jako grupa" VerticalAlignment="Top" HorizontalAlignment="Left"
                       Width="111" x:Name="IsInGroup" />
-            <TextBox Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding ElementName=IsInGroup, Path=IsChecked}"  />
-            <Button Click="SaveOnClick" Content="Add" Height="19" VerticalAlignment="Bottom"
-                    HorizontalAlignment="Left" Width="75" />
+            <TextBox Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=IsInGroup}"  Margin="0,0,-0.2,-0.6"  />
+            <CheckBox Content="Wypakuj" VerticalAlignment="Top" HorizontalAlignment="Left"
+                Width="239" x:Name="IsDecompressedAfter" Margin="0,0.4,-117.4,0" />
             <Button Click="CancelOnClick" Content="Cancel" HorizontalAlignment="Left" Width="75"
-                    Height="19" VerticalAlignment="Bottom" />
+                Height="19" VerticalAlignment="Bottom" Margin="0,0,0,-0.4" Visibility="Hidden" />
+            <Button Click="SaveOnClick" Content="Add" Height="19" VerticalAlignment="Bottom"
+                    HorizontalAlignment="Left" Width="75" Margin="0,0,0,-0.4" />
+            <Button Click="CancelOnClick" Content="Cancel" HorizontalAlignment="Left" Width="75"
+                    Height="19" VerticalAlignment="Bottom" Margin="0,0,0,-0.4" />
         </UniformGrid>
     </Grid>
 </Window>

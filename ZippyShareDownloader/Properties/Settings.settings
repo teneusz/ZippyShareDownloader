@@ -5,5 +5,8 @@
     <Setting Name="downloadPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">c:\download</Value>
     </Setting>
+    <Setting Name="sevenZipPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">C:\Program Files (x86)\7-Zip\7z.dll</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

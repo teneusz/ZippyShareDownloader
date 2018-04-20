@@ -36,29 +36,9 @@ namespace ZippyShareDownloader.View
             Log.Debug("start -- saveOnClick");
             var textRange = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
             var tab = textRange.Text.Split('\n').Select(link => link.Trim()).ToList();
-            var list = new List<DownloadEntity>();
-
-            foreach (var s in tab)
-            {
-                var link = s;
-                if (!link.StartsWith(HtmlFactory.Http) && !link.StartsWith(HtmlFactory.Https))
-                {
-                    link = HtmlFactory.Http + s;
-                }
-                if (s.Length > 0)
-                {
-                    var dream = new DownloadEntity
-                    {
-                        ServiceLink = link,
-                        IsInGroup = IsInGroup.IsChecked,
-                        Group = GroupName.Text
-                    };
-                    _viewModel.Downloads.Add(dream);
-                    list.Add(dream);
-                }
-            }
+            var downloadGroup = new DownloadGroup(tab, GroupName.Text,IsDecompressedAfter.IsChecked);
+            _viewModel.DownloadGroups.Add(downloadGroup);
             DialogResult = true;
-            SerializerUtils.SaveDownloadEntities(list);
             Log.Debug("end -- saveOnClick");
         }
 

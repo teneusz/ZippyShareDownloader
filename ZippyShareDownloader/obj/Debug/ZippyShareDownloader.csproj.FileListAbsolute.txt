@@ -17,7 +17,6 @@ C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyS
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.baml
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.dll
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.xml
-C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\log4net.config
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.CoreCompileInputs.cache
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\Newtonsoft.Json.dll
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\Newtonsoft.Json.xml
@@ -26,3 +25,9 @@ C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyS
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\GeneratedInternalTypeHelper.g.cs
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\App.baml
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csprojResolveAssemblyReference.cache
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.CopyComplete
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\SevenZip.dll
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\System.Collections.Immutable.dll
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\SevenZip.xml
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\System.Collections.Immutable.xml
+C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\SevenZipSharp.dll
