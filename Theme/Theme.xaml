@@ -1,0 +1,10 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Theme">
+    <ResourceDictionary.MergedDictionaries>
+        <!--<ResourceDictionary Source="ButtonStyle.xaml"/>-->
+        <!--<ResourceDictionary Source="GridStyle.xaml"/>-->
+        <ResourceDictionary Source="ToolbarButtonStyle.xaml"/>
+        <ResourceDictionary Source="ToolbarStyle.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

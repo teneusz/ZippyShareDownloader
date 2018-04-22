@@ -5,9 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ZippyShareDownloader"
         mc:Ignorable="d"
-        Title="MainWindow" Height="590" Width="525">
-
+        Title="File Downloader" Height="590" Width="525"
+        >
+    <Window.Resources>
+        <ImageBrush x:Key="AddLinks" ImageSource="..\Resources\AddLink.png" Stretch="UniformToFill"/>
+        <ImageBrush x:Key="StartDownload" ImageSource="..\Resources\Start.png" Stretch="UniformToFill"/>
+        <ImageBrush x:Key="PauseDownload" ImageSource="..\Resources\Pause.png" Stretch="UniformToFill"/>
+        <ImageBrush x:Key="StopDownload" ImageSource="..\Resources\Stop.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="Settings" ImageSource="..\Resources\Settings.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="About" ImageSource="..\Resources\About.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="ClearList" ImageSource="..\Resources\RemoveLink.png" Stretch="Uniform"/>
+    </Window.Resources>
     <DockPanel>
+        
 <!--        <ToolBarTray DockPanel.Dock="Top">-->
 <!--            <ToolBar>-->
 <!--                <Button Command="Cut" Content="Test"></Button>-->
@@ -15,8 +25,8 @@
 <!--        </ToolBarTray>-->
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header="File">
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
                 <MenuItem Header="Settings" Command="{Binding SettingsCommand}"/>
+                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
             </MenuItem>
             <MenuItem Header="Download">
                 <MenuItem Header="Add links" Command="{Binding AddLinksCommand}"/>
@@ -30,6 +40,41 @@
                 <MenuItem Header="About"/>
             </MenuItem>
         </Menu>
+        
+        <ToolBar Name="Toolbar" DockPanel.Dock="Top" Height="40">
+            <Button Name="ToolbarAddLinks" ToolTip="Add Links"
+                    Background="{StaticResource AddLinks}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    Command="{Binding AddLinksCommand}"
+                    />
+            <Button Name="ToolbarClearList" ToolTip="Clear List"
+                    Background="{StaticResource ClearList}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    Command="{Binding ClearListCommand}"
+                    />
+            <Button Name="ToolbarSettings"
+                    Background="{StaticResource Settings}"
+                    Style="{StaticResource ToolbarButtonStyle}" 
+                    Command="{Binding SettingsCommand}"
+                    />
+            <Button Name="ToolbarStartDownload" ToolTip="Start Download"
+                    Background="{StaticResource StartDownload}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    />
+            <Button Name="ToolbarStartPause" ToolTip="Pause Download"
+                    Background="{StaticResource PauseDownload}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    />
+            <Button Name="ToolbarStartStop" ToolTip="Stop Download"
+                    Background="{StaticResource StopDownload}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    />
+            <Button Name="ToolbarAbout" ToolTip="About"
+                    Background="{StaticResource About}"
+                    Style="{StaticResource ToolbarButtonStyle}"
+                    />
+            
+        </ToolBar>
         <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
                   ItemsSource="{Binding Downloads}" SelectionUnit="Cell" CanUserAddRows="false">
             <DataGrid.Columns>

@@ -7,6 +7,11 @@
              Exit="App_OnExit"
              Startup="App_OnStartup">
     <Application.Resources>
-        <properties:Settings x:Key="Settings" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Theme;component/Theme.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+        <!--<properties:Settings x:Key="Settings" />-->
     </Application.Resources>
 </Application>

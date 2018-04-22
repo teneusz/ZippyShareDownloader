@@ -31,3 +31,37 @@ C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyS
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\SevenZip.xml
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\System.Collections.Immutable.xml
 C:\Users\Tenek\documents\visual studio 2017\Projects\ZippyShareDownloader\ZippyShareDownloader\bin\Debug\SevenZipSharp.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\ZippyShareDownloader.exe.config
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\ZippyShareDownloader.exe
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\ZippyShareDownloader.pdb
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\log4net.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\NCalc.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Newtonsoft.Json.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\SevenZip.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\SevenZipSharp.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.Collections.Immutable.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.ValueTuple.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\log4net.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Newtonsoft.Json.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\SevenZip.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.Collections.Immutable.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csprojResolveAssemblyReference.cache
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\AddLinks.g.cs
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.g.cs
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsWindow.g.cs
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\App.g.cs
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader_MarkupCompile.cache
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader_MarkupCompile.lref
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\App.baml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\AddLinks.baml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.baml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsWindow.baml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.g.resources
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.Properties.Resources.resources
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.GenerateResource.cache
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.CoreCompileInputs.cache
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.CopyComplete
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.exe
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.pdb
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Theme.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Theme.pdb
