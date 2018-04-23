@@ -8,9 +8,9 @@
         Title="File Downloader" Height="590" Width="525"
         >
     <Window.Resources>
-        <ImageBrush x:Key="AddLinks" ImageSource="..\Resources\AddLink.png" Stretch="UniformToFill"/>
-        <ImageBrush x:Key="StartDownload" ImageSource="..\Resources\Start.png" Stretch="UniformToFill"/>
-        <ImageBrush x:Key="PauseDownload" ImageSource="..\Resources\Pause.png" Stretch="UniformToFill"/>
+        <ImageBrush x:Key="AddLinks" ImageSource="..\Resources\AddLink.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="StartDownload" ImageSource="..\Resources\Start.png" Stretch="Uniform"/>
+        <ImageBrush x:Key="PauseDownload" ImageSource="..\Resources\Pause.png" Stretch="Uniform"/>
         <ImageBrush x:Key="StopDownload" ImageSource="..\Resources\Stop.png" Stretch="Uniform"/>
         <ImageBrush x:Key="Settings" ImageSource="..\Resources\Settings.png" Stretch="Uniform"/>
         <ImageBrush x:Key="About" ImageSource="..\Resources\About.png" Stretch="Uniform"/>
@@ -42,7 +42,7 @@
         </Menu>
         
         <ToolBar Name="Toolbar" DockPanel.Dock="Top" Height="40">
-            <Button Name="ToolbarAddLinks" ToolTip="Add Links"
+            <Button Name="ToolbarAddLinks" ToolTip="Add Links" 
                     Background="{StaticResource AddLinks}"
                     Style="{StaticResource ToolbarButtonStyle}"
                     Command="{Binding AddLinksCommand}"

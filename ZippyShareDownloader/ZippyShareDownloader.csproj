@@ -96,13 +96,16 @@
     </ApplicationDefinition>
     <Compile Include="Entity\DownloadGroup.cs" />
     <Compile Include="Html\ServicesEnum.cs" />
+    <Compile Include="Model\ObservableCollectionEX.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="util\ArchiveUtil.cs" />
     <Compile Include="util\FileUtil.cs" />
     <Compile Include="util\ScriptEngine.cs" />
     <Compile Include="util\SerializerUtils.cs" />
-    <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\AddLinksVM.cs" />
+    <Compile Include="ViewModel\MainWindowVM.cs" />
     <Compile Include="ViewModel\RelayCommand.cs" />
+    <Compile Include="ViewModel\SettingsWindowVM.cs" />
     <Compile Include="View\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>

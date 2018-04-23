@@ -65,3 +65,9 @@ D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDow
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.pdb
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Theme.dll
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Theme.pdb
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\CommonServiceLocator.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.Wpf.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.Windows.Interactivity.dll
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.Wpf.xml

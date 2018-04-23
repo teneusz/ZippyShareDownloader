@@ -1,4 +1,6 @@
 ﻿using Microsoft.Win32;
+using Prism.Commands;
+using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,14 +13,16 @@ using System.Windows.Input;
 using System.Windows.Navigation;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Entity;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
+using ZippyShareDownloader.View;
 using Application = System.Windows.Application;
 
-namespace ZippyShareDownloader.View
+namespace ZippyShareDownloader.ViewModel
 {
-    public class MainViewModel : INotifyPropertyChanged
+    public class MainWindowVM : BindableBase
     {
-        public static MainViewModel InstatnceMainViewModel = new MainViewModel();
+        public static MainWindowVM InstatnceMainViewModel = new MainWindowVM();
         private int _downloadingCount = 0;
         private ObservableCollectionEx<DownloadEntity> _downloads = new ObservableCollectionEx<DownloadEntity>();
         public List<DownloadGroup> DownloadGroups = new List<DownloadGroup>();
@@ -68,15 +72,15 @@ namespace ZippyShareDownloader.View
             }
         }
 
-        public ICommand ExitCommand { get; set; }
-        public ICommand AddLinksCommand { get; set; }
-        public ICommand DownloadCommand { get; set; }
-        public ICommand AboutCommand { get; set; }
-        public ICommand UncheckAllCommand { get; }
-        public ICommand SettingsCommand { get; set; }
-        public ICommand ClearListCommand { get; }
-        public ICommand SaveDownloadPathCommand { get; }
-        public ICommand SaveSevenZipLibraryPathCommand { get; }
+        public DelegateCommand ExitCommand { get; set; }
+        public DelegateCommand AddLinksCommand { get; set; }
+        public DelegateCommand DownloadCommand { get; set; }
+        public DelegateCommand AboutCommand { get; set; }
+        public DelegateCommand UncheckAllCommand { get; }
+        public DelegateCommand SettingsCommand { get; set; }
+        public DelegateCommand ClearListCommand { get; }
+        public DelegateCommand SaveDownloadPathCommand { get; }
+        public DelegateCommand SaveSevenZipLibraryPathCommand { get; }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -86,31 +90,31 @@ namespace ZippyShareDownloader.View
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public MainViewModel()
+        public MainWindowVM()
         {
-            ExitCommand = new RelayCommand(Exit);
-            AddLinksCommand = new RelayCommand(AddLinks);
-            AboutCommand = new RelayCommand(About);
-            DownloadCommand = new RelayCommand(Download);
-            SettingsCommand = new RelayCommand(SettingsWindow);
-            UncheckAllCommand = new RelayCommand(UncheckAll);
-            ClearListCommand = new RelayCommand(ClearList);
-            SaveDownloadPathCommand = new RelayCommand(SaveDownloadPath);
-            SaveSevenZipLibraryPathCommand = new RelayCommand(SaveSevenZipLibraryPath);
+            ExitCommand = new DelegateCommand(Exit);
+            AddLinksCommand = new DelegateCommand(AddLinks);
+            AboutCommand = new DelegateCommand(About);
+            DownloadCommand = new DelegateCommand(Download);
+            SettingsCommand = new DelegateCommand(SettingsWindow);
+            UncheckAllCommand = new DelegateCommand(UncheckAll);
+            ClearListCommand = new DelegateCommand(ClearList);
+            SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
+            SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
         }
 
-        public void Download(object obj)
+        private void Download()
         {
             if (_downloadingCount > _downloadAmount) return;
             var first = Downloads.FirstOrDefault(en =>
                 en.Status == DownloadStatus.NotDownloading || en.Status == DownloadStatus.Preparing);
             if (first == null) return;
-            first.AfterDownload = AfterDownload;
+            first.AfterDownload = new DelegateCommand(AfterDownload);
             first.StartDownload(DownloadLocation);
             _downloadingCount++;
         }
 
-        public void SaveDownloadPath(object obj)
+        public void SaveDownloadPath()
         {
             var dialog = new FolderBrowserDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
@@ -119,7 +123,7 @@ namespace ZippyShareDownloader.View
             }
         }
 
-        private void SaveSevenZipLibraryPath(object obj)
+        private void SaveSevenZipLibraryPath()
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
             dialog.Filter = "7-z library|7z.dll";
@@ -129,30 +133,30 @@ namespace ZippyShareDownloader.View
             }
         }
 
-        public void AfterDownload(object obj)
+        public void AfterDownload()
         {
             _downloadingCount--;
-            Download(null);
+            Download();
             SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
         }
 
-        public void AddLinks(object obj)
+        public void AddLinks()
         {
             var window = new AddLinks();
             window.ShowDialog();
         }
 
-        public void SettingsWindow(object obj)
+        public void SettingsWindow()
         {
             var window = new SettingsWindow();
             window.ShowDialog();
         }
 
-        public void About(object obj)
+        public void About()
         {
         }
 
-        public void UncheckAll(object obj)
+        public void UncheckAll()
         {
             foreach (var entity in _downloads)
             {
@@ -160,7 +164,7 @@ namespace ZippyShareDownloader.View
             }
         }
 
-        public void ClearList(object obj)
+        public void ClearList()
         {
             foreach (var entity in _downloads.ToList())
             {
@@ -173,7 +177,7 @@ namespace ZippyShareDownloader.View
             SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
         }
 
-        public void Exit(object obj)
+        public void Exit()
         {
             Application.Current.Shutdown();
         }

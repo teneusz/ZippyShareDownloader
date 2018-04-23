@@ -12,9 +12,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using log4net;
+using Prism.Commands;
 using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.Html;
 using ZippyShareDownloader.util;
+using ZippyShareDownloader.ViewModel;
 
 namespace ZippyShareDownloader.View
 {
@@ -23,28 +25,10 @@ namespace ZippyShareDownloader.View
     /// </summary>
     public partial class AddLinks : Window
     {
-        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
-        private static readonly ILog Log = LogManager.GetLogger(typeof(AddLinks));
-
         public AddLinks()
         {
             InitializeComponent();
-        }
-
-        private void SaveOnClick(object sender, RoutedEventArgs e)
-        {
-            Log.Debug("start -- saveOnClick");
-            var textRange = new TextRange(TextBox.Document.ContentStart, TextBox.Document.ContentEnd);
-            var tab = textRange.Text.Split('\n').Select(link => link.Trim()).ToList();
-            var downloadGroup = new DownloadGroup(tab, GroupName.Text,IsDecompressedAfter.IsChecked);
-            _viewModel.DownloadGroups.Add(downloadGroup);
-            DialogResult = true;
-            Log.Debug("end -- saveOnClick");
-        }
-
-        private void CancelOnClick(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
+            DataContext = new ViewModel.AddLinksVM();
         }
     }
 }

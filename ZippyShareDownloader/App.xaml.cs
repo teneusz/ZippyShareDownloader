@@ -9,6 +9,7 @@ using System.Windows;
 using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.util;
 using ZippyShareDownloader.View;
+using ZippyShareDownloader.ViewModel;
 
 namespace ZippyShareDownloader
 {
@@ -17,7 +18,7 @@ namespace ZippyShareDownloader
     /// </summary>
     public partial class App : Application
     {
-        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
+        private readonly MainWindowVM _viewModel = MainWindowVM.InstatnceMainViewModel;
 
         private void App_OnExit(object sender, ExitEventArgs e)
         {

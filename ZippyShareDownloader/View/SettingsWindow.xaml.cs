@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ZippyShareDownloader.ViewModel;
 
 namespace ZippyShareDownloader.View
 {
@@ -19,7 +20,7 @@ namespace ZippyShareDownloader.View
     /// </summary>
     public partial class SettingsWindow : Window
     {
-        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
+        private readonly MainWindowVM _viewModel = MainWindowVM.InstatnceMainViewModel;
         public SettingsWindow()
         {
             InitializeComponent();

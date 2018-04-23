@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ZippyShareDownloader.Html;
 using ZippyShareDownloader.util;
 using ZippyShareDownloader.View;
+using ZippyShareDownloader.ViewModel;
 
 namespace ZippyShareDownloader.Entity
 {
@@ -66,7 +67,7 @@ namespace ZippyShareDownloader.Entity
                     ServiceLink = link,
                     DownloadGroup = this
                 };
-                MainViewModel.InstatnceMainViewModel.Downloads.Add(dream);
+                MainWindowVM.InstatnceMainViewModel.Downloads.Add(dream);
                 DonwloadEntities.Add(dream);
             }
         }
