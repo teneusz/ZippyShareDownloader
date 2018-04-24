@@ -1,9 +1,9 @@
-﻿<Window x:Class="ZippyShareDownloader.MainWindow"
+﻿<Window x:Class="ZippyShareDownloader.View.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ZippyShareDownloader"
+        xmlns:local="clr-namespace:ZippyShareDownloader.View"
         mc:Ignorable="d"
         Title="File Downloader" Height="590" Width="525"
         >
@@ -75,9 +75,9 @@
                     />
             
         </ToolBar>
-        <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
-                  ItemsSource="{Binding Downloads}" SelectionUnit="Cell" CanUserAddRows="false">
-            <DataGrid.Columns>
+        <DataGrid AutoGenerateColumns="true" x:Name="DataGrid"
+                  ItemsSource="{Binding Downloads,UpdateSourceTrigger=PropertyChanged}" SelectionUnit="Cell" CanUserAddRows="false">
+            <!--<DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Save" Binding="{Binding SaveToFile}"/>
                 <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" />
                 <DataGridTextColumn Header="Group Name" Binding="{Binding Group}" />
@@ -86,14 +86,14 @@
                 <DataGridTextColumn Header="Download Link" Binding="{Binding DownloadLink}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Progress" Binding="{Binding DownloadPercent}" IsReadOnly="True"/>
-<!--                <DataGridTemplateColumn Header="Progress">-->
+--><!--                <DataGridTemplateColumn Header="Progress">-->
 <!--                    <DataGridTemplateColumn.CellTemplate>-->
 <!--                        <DataTemplate>-->
 <!--                            <ProgressBar Maximum="100" Minimum="0"  Value="{Binding Path=DownloadPercent, Mode=OneWay, Delay=1000}"/>-->
 <!--                        </DataTemplate>-->
 <!--                    </DataGridTemplateColumn.CellTemplate>-->
-<!--                </DataGridTemplateColumn>-->
-            </DataGrid.Columns>
+<!--                </DataGridTemplateColumn>--><!--
+            </DataGrid.Columns>-->
         </DataGrid>
 
     </DockPanel>

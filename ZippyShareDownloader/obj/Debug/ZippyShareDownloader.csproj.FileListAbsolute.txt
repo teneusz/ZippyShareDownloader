@@ -48,14 +48,12 @@ D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.Collec
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csprojResolveAssemblyReference.cache
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\AddLinks.g.cs
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.g.cs
-D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsWindow.g.cs
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\App.g.cs
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader_MarkupCompile.cache
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader_MarkupCompile.lref
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\App.baml
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\AddLinks.baml
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\MainWindow.baml
-D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsWindow.baml
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.g.resources
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.Properties.Resources.resources
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\ZippyShareDownloader.csproj.GenerateResource.cache
@@ -71,3 +69,5 @@ D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.Wpf.dll
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\System.Windows.Interactivity.dll
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.xml
 D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\bin\Debug\Prism.Wpf.xml
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsV.g.cs
+D:\Programowanie\WPF\FileDownloader\ZippyShareDownloader\obj\Debug\View\SettingsV.baml

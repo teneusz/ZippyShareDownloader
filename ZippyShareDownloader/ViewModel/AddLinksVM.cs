@@ -14,13 +14,13 @@ namespace ZippyShareDownloader.ViewModel
 {
     class AddLinksVM : BindableBase
     {
-        private readonly MainWindowVM _viewModel = MainWindowVM.InstatnceMainViewModel;
+        private readonly MainWindowVM _viewModel = MainWindowVM.InstatnceMainVM;
         private static readonly ILog Log = LogManager.GetLogger(typeof(AddLinks));
 
         public DelegateCommand<object> Save { get; }
         public DelegateCommand<object> Cancel { get; }
-        private string _links = "testLink";
-        private string _groupName = "testGroup";
+        private string _links = "";
+        private string _groupName = "";
         private bool _isDecompressedAfter = false;
         private bool _isInGroup;
 

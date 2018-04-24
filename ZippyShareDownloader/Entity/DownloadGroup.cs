@@ -67,7 +67,7 @@ namespace ZippyShareDownloader.Entity
                     ServiceLink = link,
                     DownloadGroup = this
                 };
-                MainWindowVM.InstatnceMainViewModel.Downloads.Add(dream);
+                MainWindowVM.InstatnceMainVM.Downloads.Add(dream);
                 DonwloadEntities.Add(dream);
             }
         }

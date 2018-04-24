@@ -22,7 +22,7 @@ namespace ZippyShareDownloader.ViewModel
 {
     public class MainWindowVM : BindableBase
     {
-        public static MainWindowVM InstatnceMainViewModel = new MainWindowVM();
+        public static MainWindowVM InstatnceMainVM = new MainWindowVM();
         private int _downloadingCount = 0;
         private ObservableCollectionEx<DownloadEntity> _downloads = new ObservableCollectionEx<DownloadEntity>();
         public List<DownloadGroup> DownloadGroups = new List<DownloadGroup>();
@@ -32,32 +32,31 @@ namespace ZippyShareDownloader.ViewModel
             get => _downloads;
             set
             {
-                _downloads = value;
-                OnPropertyChanged(nameof(Downloads));
+                SetProperty(ref _downloads, value);
             }
         }
 
         public string DownloadLocation
         {
             get => Properties.Settings.Default.downloadPath;
-            set
-            {
-                Properties.Settings.Default.downloadPath = value;
-                Properties.Settings.Default.Save(); // TODO: move to another place
-                OnPropertyChanged(nameof(DownloadLocation));
-            }
+            //set
+            //{
+            //    Properties.Settings.Default.downloadPath = value;
+            //    Properties.Settings.Default.Save(); // TODO: move to another place
+            //    OnPropertyChanged(nameof(DownloadLocation));
+            //}
         }
 
-        public string SevenZipLibraryLocation
-        {
-            get => Properties.Settings.Default.sevenZipPath;
-            set
-            {
-                Properties.Settings.Default.sevenZipPath = value;
-                Properties.Settings.Default.Save();
-                OnPropertyChanged(nameof(SevenZipLibraryLocation));
-            }
-        }
+        //public string SevenZipLibraryLocation
+        //{
+        //    get => Properties.Settings.Default.sevenZipPath;
+        //    set
+        //    {
+        //        Properties.Settings.Default.sevenZipPath = value;
+        //        Properties.Settings.Default.Save();
+        //        OnPropertyChanged(nameof(SevenZipLibraryLocation));
+        //    }
+        //}
 
 
         private int _downloadAmount = 1;
@@ -67,11 +66,10 @@ namespace ZippyShareDownloader.ViewModel
             get => _downloadAmount;
             set
             {
-                _downloadAmount = value;
-                OnPropertyChanged(nameof(DownloadAmount));
+               SetProperty(ref _downloadAmount, value);
             }
         }
-
+        #region Command and Constructor
         public DelegateCommand ExitCommand { get; set; }
         public DelegateCommand AddLinksCommand { get; set; }
         public DelegateCommand DownloadCommand { get; set; }
@@ -79,16 +77,6 @@ namespace ZippyShareDownloader.ViewModel
         public DelegateCommand UncheckAllCommand { get; }
         public DelegateCommand SettingsCommand { get; set; }
         public DelegateCommand ClearListCommand { get; }
-        public DelegateCommand SaveDownloadPathCommand { get; }
-        public DelegateCommand SaveSevenZipLibraryPathCommand { get; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         public MainWindowVM()
         {
@@ -99,10 +87,10 @@ namespace ZippyShareDownloader.ViewModel
             SettingsCommand = new DelegateCommand(SettingsWindow);
             UncheckAllCommand = new DelegateCommand(UncheckAll);
             ClearListCommand = new DelegateCommand(ClearList);
-            SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
-            SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
+          
         }
-
+        #endregion
+        
         private void Download()
         {
             if (_downloadingCount > _downloadAmount) return;
@@ -113,26 +101,7 @@ namespace ZippyShareDownloader.ViewModel
             first.StartDownload(DownloadLocation);
             _downloadingCount++;
         }
-
-        public void SaveDownloadPath()
-        {
-            var dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                DownloadLocation = dialog.SelectedPath + @"\";
-            }
-        }
-
-        private void SaveSevenZipLibraryPath()
-        {
-            var dialog = new System.Windows.Forms.OpenFileDialog();
-            dialog.Filter = "7-z library|7z.dll";
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                SevenZipLibraryLocation = dialog.SafeFileName;
-            }
-        }
-
+        
         public void AfterDownload()
         {
             _downloadingCount--;
@@ -148,7 +117,7 @@ namespace ZippyShareDownloader.ViewModel
 
         public void SettingsWindow()
         {
-            var window = new SettingsWindow();
+            var window = new SettingsV();
             window.ShowDialog();
         }
 
@@ -168,12 +137,11 @@ namespace ZippyShareDownloader.ViewModel
         {
             foreach (var entity in _downloads.ToList())
             {
-                if (!entity.Status.Equals(DownloadStatus.Downloading))
+                if (!entity.Status.Equals(DownloadStatus.Downloading))//zmieniłem warunek z !entity.Status.Equals(DownloadStatus.Downloading
                 {
                     _downloads.Remove(entity);
                 }
             }
-
             SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
         }
 
@@ -183,3 +151,13 @@ namespace ZippyShareDownloader.ViewModel
         }
     }
 }
+
+//http://www53.zippyshare.com/v/SWBpqwM9/file.html
+//http://www53.zippyshare.com/v/gfO0uA0C/file.html
+//http://www53.zippyshare.com/v/YUfUdYpU/file.html
+//http://www53.zippyshare.com/v/3ibie84b/file.html
+//http://www53.zippyshare.com/v/5vARWPM1/file.html
+//http://www53.zippyshare.com/v/C5DjO8Dm/file.html
+//http://www53.zippyshare.com/v/bF1EKWX0/file.html
+//http://www53.zippyshare.com/v/mTaBemMd/file.html
+//http://www53.zippyshare.com/v/jXeL1aK7/file.html

@@ -1,10 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Windows;
-using ZippyShareDownloader.View;
+﻿using System.Windows;
 
-namespace ZippyShareDownloader
+namespace ZippyShareDownloader.View
 {
     /// <inheritdoc>
     ///     <cref></cref>
@@ -19,8 +15,5 @@ namespace ZippyShareDownloader
             InitializeComponent();
             DataContext = new ViewModel.MainWindowVM();
         }
-
     }
-
-
 }
