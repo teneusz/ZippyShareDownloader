@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Documents;
-using ZippyShareDownloader.Entity;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.View;
 
 namespace ZippyShareDownloader.ViewModel
@@ -55,7 +55,7 @@ namespace ZippyShareDownloader.ViewModel
             Log.Debug("start -- saveOnClick");
             var tab = Links.Split('\n').Select(link => link.Trim()).ToList();
             var downloadGroup = new DownloadGroup(tab, GroupName, IsDecompressedAfter);
-            _viewModel.DownloadGroups.Add(downloadGroup);
+            MainWindowVM.DownloadGroups.Add(downloadGroup);
             (obj as AddLinks).DialogResult = true;
             Log.Debug("end -- saveOnClick");
         }

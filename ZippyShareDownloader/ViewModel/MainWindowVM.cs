@@ -3,6 +3,7 @@ using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -12,7 +13,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using ZippyShareDownloader.Annotations;
-using ZippyShareDownloader.Entity;
 using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
 using ZippyShareDownloader.View;
@@ -20,12 +20,13 @@ using Application = System.Windows.Application;
 
 namespace ZippyShareDownloader.ViewModel
 {
+    
     public class MainWindowVM : BindableBase
     {
-        public static MainWindowVM InstatnceMainVM = new MainWindowVM();
+        public static MainWindowVM InstatnceMainVM = null;
         private int _downloadingCount = 0;
-        private ObservableCollectionEx<DownloadEntity> _downloads = new ObservableCollectionEx<DownloadEntity>();
-        public List<DownloadGroup> DownloadGroups = new List<DownloadGroup>();
+        private static ObservableCollectionEx<DownloadEntity> _downloads = new ObservableCollectionEx<DownloadEntity>();
+        public static ObservableCollection<DownloadGroup> DownloadGroups = new ObservableCollection<DownloadGroup>();
 
         public ObservableCollectionEx<DownloadEntity> Downloads
         {
@@ -39,25 +40,8 @@ namespace ZippyShareDownloader.ViewModel
         public string DownloadLocation
         {
             get => Properties.Settings.Default.downloadPath;
-            //set
-            //{
-            //    Properties.Settings.Default.downloadPath = value;
-            //    Properties.Settings.Default.Save(); // TODO: move to another place
-            //    OnPropertyChanged(nameof(DownloadLocation));
-            //}
+           
         }
-
-        //public string SevenZipLibraryLocation
-        //{
-        //    get => Properties.Settings.Default.sevenZipPath;
-        //    set
-        //    {
-        //        Properties.Settings.Default.sevenZipPath = value;
-        //        Properties.Settings.Default.Save();
-        //        OnPropertyChanged(nameof(SevenZipLibraryLocation));
-        //    }
-        //}
-
 
         private int _downloadAmount = 1;
 
@@ -80,6 +64,7 @@ namespace ZippyShareDownloader.ViewModel
 
         public MainWindowVM()
         {
+            InstatnceMainVM = this;
             ExitCommand = new DelegateCommand(Exit);
             AddLinksCommand = new DelegateCommand(AddLinks);
             AboutCommand = new DelegateCommand(About);
@@ -106,7 +91,7 @@ namespace ZippyShareDownloader.ViewModel
         {
             _downloadingCount--;
             Download();
-            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
+            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = MainWindowVM.DownloadGroups});
         }
 
         public void AddLinks()
@@ -142,7 +127,7 @@ namespace ZippyShareDownloader.ViewModel
                     _downloads.Remove(entity);
                 }
             }
-            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = this.DownloadGroups});
+            SerializerUtils.SaveConfig(new App.ConfigHelper() {DownloadGroups = MainWindowVM.DownloadGroups});
         }
 
         public void Exit()

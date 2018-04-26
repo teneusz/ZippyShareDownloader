@@ -9,9 +9,10 @@ using Newtonsoft.Json;
 using Prism.Commands;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Html;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
 
-namespace ZippyShareDownloader.Entity
+namespace ZippyShareDownloader.Model
 {
     [Serializable]
     public class DownloadEntity : INotifyPropertyChanged
@@ -189,14 +190,5 @@ namespace ZippyShareDownloader.Entity
         }
     }
 
-    public enum DownloadStatus
-    {
-        Preparing,
-        NotDownloading,
-        Downloading,
-        Completed,
-        Canceled,
-        Error,
-        NotFound
-    }
+   
 }

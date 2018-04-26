@@ -75,9 +75,9 @@
                     />
             
         </ToolBar>
-        <DataGrid AutoGenerateColumns="true" x:Name="DataGrid"
-                  ItemsSource="{Binding Downloads,UpdateSourceTrigger=PropertyChanged}" SelectionUnit="Cell" CanUserAddRows="false">
-            <!--<DataGrid.Columns>
+        <DataGrid AutoGenerateColumns="false" x:Name="DataGrid"
+                  ItemsSource="{Binding Downloads}" SelectionUnit="Cell" CanUserAddRows="false">
+            <DataGrid.Columns>
                 <DataGridCheckBoxColumn Header="Save" Binding="{Binding SaveToFile}"/>
                 <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" />
                 <DataGridTextColumn Header="Group Name" Binding="{Binding Group}" />
@@ -86,14 +86,14 @@
                 <DataGridTextColumn Header="Download Link" Binding="{Binding DownloadLink}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Progress" Binding="{Binding DownloadPercent}" IsReadOnly="True"/>
---><!--                <DataGridTemplateColumn Header="Progress">-->
-<!--                    <DataGridTemplateColumn.CellTemplate>-->
-<!--                        <DataTemplate>-->
-<!--                            <ProgressBar Maximum="100" Minimum="0"  Value="{Binding Path=DownloadPercent, Mode=OneWay, Delay=1000}"/>-->
-<!--                        </DataTemplate>-->
-<!--                    </DataGridTemplateColumn.CellTemplate>-->
-<!--                </DataGridTemplateColumn>--><!--
-            </DataGrid.Columns>-->
+                <!--<DataGridTemplateColumn Header="Progress">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <ProgressBar Maximum="100" Minimum="0"  Value="{Binding Path=DownloadPercent, Mode=OneWay, Delay=1000}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>-->
+            </DataGrid.Columns>
         </DataGrid>
 
     </DockPanel>

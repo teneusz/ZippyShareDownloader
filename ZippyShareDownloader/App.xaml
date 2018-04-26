@@ -12,6 +12,5 @@
                 <ResourceDictionary Source="/Theme;component/Theme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-        <!--<properties:Settings x:Key="Settings" />-->
     </Application.Resources>
 </Application>

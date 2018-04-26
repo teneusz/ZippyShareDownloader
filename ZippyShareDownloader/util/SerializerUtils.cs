@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
-using ZippyShareDownloader.Entity;
+using ZippyShareDownloader.Model;
 
 namespace ZippyShareDownloader.util
 {
@@ -158,7 +158,7 @@ namespace ZippyShareDownloader.util
         {
             if (!File.Exists("configs.json")) return new App.ConfigHelper();
             var result = ReadFromJsonFile<App.ConfigHelper>("configs.json");
-            result.DownloadGroups.ForEach(group => group.DonwloadEntities.ForEach(entity =>
+            result.DownloadGroups.ToList().ForEach(group => group.DownloadEntities.ForEach(entity =>
                 entity.Status =
                     entity.Status == DownloadStatus.Downloading
                         ? DownloadStatus.Preparing

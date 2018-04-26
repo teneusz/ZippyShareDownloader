@@ -5,19 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ZippyShareDownloader.Html;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
 using ZippyShareDownloader.View;
 using ZippyShareDownloader.ViewModel;
 
-namespace ZippyShareDownloader.Entity
+namespace ZippyShareDownloader.Model
 {
     [Serializable]
     public class DownloadGroup
     {
-        public List<DownloadEntity> DonwloadEntities { get=>_downloadEntities;
+        private List<DownloadEntity> _downloadEntities = new List<DownloadEntity>();
+        public List<DownloadEntity> DownloadEntities { get=>_downloadEntities;
             set => _downloadEntities = value;
         }
-        private List<DownloadEntity> _downloadEntities = new List<DownloadEntity>();
         public bool? IsDecompressedAfter { get=>_isDecompressedAfter; set=>_isDecompressedAfter = value; }
         private bool? _isDecompressedAfter;
         public string Name { get; set; }
@@ -37,8 +38,8 @@ namespace ZippyShareDownloader.Entity
         public DownloadGroup(List<DownloadEntity> entities, string name, bool? isDecompressedAfter) : this(name,
             isDecompressedAfter)
         {
-            this.DonwloadEntities = entities;
-            foreach (var donwloadEntity in DonwloadEntities)
+            this.DownloadEntities = entities;
+            foreach (var donwloadEntity in DownloadEntities)
             {
                 donwloadEntity.DownloadGroup = this;
             }
@@ -68,20 +69,20 @@ namespace ZippyShareDownloader.Entity
                     DownloadGroup = this
                 };
                 MainWindowVM.InstatnceMainVM.Downloads.Add(dream);
-                DonwloadEntities.Add(dream);
+                DownloadEntities.Add(dream);
             }
         }
 
         private void Decompress()
         {
-            var file = DonwloadEntities.OrderBy(e => e.FileName).First().FileLocation;
+            var file = DownloadEntities.OrderBy(e => e.FileName).First().FileLocation;
             ArchiveUtil.UnpackArchive(file, Directory.GetParent(file).FullName);
         }
 
         public void Refresh()
         {
             if (_isEnded) return;
-            var everyone = DonwloadEntities.Aggregate(true,
+            var everyone = DownloadEntities.Aggregate(true,
                 (current, donwloadEntity) => current && donwloadEntity.Status == DownloadStatus.Completed);
 
             if (!everyone) return;
