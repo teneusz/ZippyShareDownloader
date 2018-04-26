@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using ZippyShareDownloader.Entity;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
 using ZippyShareDownloader.View;
+using ZippyShareDownloader.ViewModel;
 
 namespace ZippyShareDownloader
 {
@@ -17,13 +19,13 @@ namespace ZippyShareDownloader
     /// </summary>
     public partial class App : Application
     {
-        private readonly MainViewModel _viewModel = MainViewModel.InstatnceMainViewModel;
+        private readonly MainWindowVM _viewModel = new MainWindowVM();
 
         private void App_OnExit(object sender, ExitEventArgs e)
         {
             ConfigHelper helper = new ConfigHelper
             {
-                DownloadGroups = _viewModel.DownloadGroups
+               DownloadGroups = MainWindowVM.DownloadGroups
             };
             SerializerUtils.SaveConfig(helper);
         }
@@ -33,8 +35,8 @@ namespace ZippyShareDownloader
             var helper = SerializerUtils.LoadConfig();
             foreach (var group in helper.DownloadGroups)
             {
-                _viewModel.DownloadGroups.Add(group);
-                foreach (var entity in group.DonwloadEntities)
+                MainWindowVM.DownloadGroups.Add(group);
+                foreach (var entity in group.DownloadEntities)
                 {
                     _viewModel.Downloads.Add(entity);
                     entity.DownloadGroup = group;
@@ -47,8 +49,8 @@ namespace ZippyShareDownloader
         public class ConfigHelper
         {
            
-            private List<DownloadGroup> _downloadGroups = new List<DownloadGroup>();
-            public List<DownloadGroup> DownloadGroups
+            private ObservableCollection<DownloadGroup> _downloadGroups = new ObservableCollection<DownloadGroup>();
+            public ObservableCollection<DownloadGroup> DownloadGroups
             {
                 get => _downloadGroups;
                 set => _downloadGroups = value;

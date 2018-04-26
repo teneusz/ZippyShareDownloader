@@ -10,7 +10,6 @@ using System.Security.Policy;
 using System.Web;
 using log4net;
 using ZippyShareDownloader.Annotations;
-using ZippyShareDownloader.Entity;
 
 namespace ZippyShareDownloader.Html
 {

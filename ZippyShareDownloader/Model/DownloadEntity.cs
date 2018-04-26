@@ -6,11 +6,13 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using log4net;
 using Newtonsoft.Json;
+using Prism.Commands;
 using ZippyShareDownloader.Annotations;
 using ZippyShareDownloader.Html;
+using ZippyShareDownloader.Model;
 using ZippyShareDownloader.util;
 
-namespace ZippyShareDownloader.Entity
+namespace ZippyShareDownloader.Model
 {
     [Serializable]
     public class DownloadEntity : INotifyPropertyChanged
@@ -30,7 +32,7 @@ namespace ZippyShareDownloader.Entity
         public bool SaveToFile { get; set; } = true;
 
         [JsonIgnore]
-        public Action<object> AfterDownload { get; set; }
+        public DelegateCommand AfterDownload { get; set; }
 
         public string Group => DownloadGroup?.Name;
         public bool IsInGroup => DownloadGroup != null;
@@ -57,7 +59,7 @@ namespace ZippyShareDownloader.Entity
                 PrepareToDownload();
                 if (!IsStatusCorrect())
                 {
-                    AfterDownload(null);
+                    AfterDownload.Execute();
                     return;
                 }
                 ProcessFileLocation(saveLocation);
@@ -120,7 +122,7 @@ namespace ZippyShareDownloader.Entity
             }
             OnPropertyChanged(nameof(DownloadPercent));
             OnPropertyChanged(nameof(Status));
-            AfterDownload(null);
+            AfterDownload.Execute();
         }
 
         private void CheckIfFileIsDownloadedSuccesful()
@@ -188,14 +190,5 @@ namespace ZippyShareDownloader.Entity
         }
     }
 
-    public enum DownloadStatus
-    {
-        Preparing,
-        NotDownloading,
-        Downloading,
-        Completed,
-        Canceled,
-        Error,
-        NotFound
-    }
+   
 }
