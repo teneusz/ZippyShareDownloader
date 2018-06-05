@@ -117,6 +117,7 @@ namespace TenekDownloader.viewModel
                     downloadGroupEntity.DownloadGroup = downloadGroup;
                 }
             }
+            if(SettingHelper.AutoDownload) DownloadService.Download();
         }
 
         private void SaveGroupsToFile()
