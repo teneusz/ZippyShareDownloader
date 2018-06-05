@@ -50,6 +50,7 @@ namespace TenekDownloader.download
                     else
                     {
                         CheckIfFileIsDownloadedSuccesful(downloadLocation, entity);
+                        ExtractArchive(entity);
                     }
 
                     AfterDownload();
@@ -58,6 +59,24 @@ namespace TenekDownloader.download
                 webClient.DownloadProgressChanged += (sender, e) => entity.DownloadPercent = e.ProgressPercentage;
                 webClient.DownloadFileAsync(new Uri(entity.LinkInfo.DownloadLink), downloadLocation);
                 webClient.Proxy = null;
+            }
+        }
+
+        private static void ExtractArchive(DownloadEntity entity)
+        {
+            if (!entity.DownloadGroup.IsAutoExtracting) return;
+            var allDownloaded = true;
+            foreach (var downloadGroupEntity in entity.DownloadGroup.Entities)
+            {
+                allDownloaded = allDownloaded && downloadGroupEntity.Status == DownloadStatus.Completed;
+            }
+
+            if (!allDownloaded) return;
+            if (!entity.DownloadGroup.IsMoreThanOneArchive)
+            {
+                var file = entity.DownloadGroup.Entities.OrderBy(e => e.LinkInfo.FileName).First().LinkInfo
+                    .DownloadLocation;
+                ArchiveUtil.UnpackArchive(file, Directory.GetParent(file).FullName, (sender, args) => entity.DownloadGroup.ExtractProgress = args.PercentDone);
             }
         }
 

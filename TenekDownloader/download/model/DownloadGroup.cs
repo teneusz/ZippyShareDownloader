@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 
@@ -15,15 +16,28 @@ namespace TenekDownloader.download.model
         private bool? _unpack;
         public bool ManyArchives;
 
+        public int ExtractProgress
+        {
+            get => _extractProgress;
+            set => SetProperty(ref _extractProgress, value);
+        }
+
+        public DownloadGroup()
+        {
+        }
+
         public DownloadGroup(List<string> links, string name, bool? unpack)
         {
             this._links = links;
             this._name = name;
-            this._unpack = unpack;
+            this.IsAutoExtracting = unpack??false;
+
+            _downloadLocation = Properties.Settings.Default.DownloadLocation;
             foreach(var link in links)
             {
-                if(string.IsNullOrEmpty(link)) continue;
-                Entities.Add(new DownloadEntity(link){DownloadGroup = this});
+                var unescapeLink = link.Replace("\r","");
+                if(string.IsNullOrEmpty(unescapeLink)) continue;
+                Entities.Add(new DownloadEntity(unescapeLink) {DownloadGroup = this});
             }
         }
 
@@ -38,6 +52,7 @@ namespace TenekDownloader.download.model
         private string _downloadLocation = "./";
         private bool _isAutoExtracting = false;
         private bool _isMoreThanOneArchive = false;
+        private int _extractProgress;
         public string DownloadLocation { get=>_downloadLocation; set=>SetProperty(ref _downloadLocation,value); }
 
         public bool IsAutoExtracting

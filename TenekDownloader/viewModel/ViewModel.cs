@@ -1,23 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
+using Windows.UI.Notifications;
 using Microsoft.Toolkit.Uwp.Notifications;
+//using Windows.UI.Notifications;
 using Prism.Commands;
+using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using TenekDownloader.download;
 using TenekDownloader.download.model;
 using TenekDownloader.link.model;
 using TenekDownloader.util;
-using TenekDownloader.view;
+using Windows.Data.Xml;
 using Application = System.Windows.Application;
-using ToastContent = Microsoft.Toolkit.Uwp.Notifications.ToastContent;
-
 
 namespace TenekDownloader.viewModel
 {
@@ -41,7 +43,17 @@ namespace TenekDownloader.viewModel
 
         public ObservableCollection<DownloadEntity> Entities
         {
-            get => _entities;
+            get
+            {
+                //TODO: No other idea :D
+                _entities.Clear();
+                foreach (var downloadGroup in Groups)
+                {
+                    _entities.AddRange(downloadGroup.Entities);
+                }
+
+                return _entities;
+            }
             set => SetProperty(ref _entities, value);
         }
 
@@ -50,7 +62,6 @@ namespace TenekDownloader.viewModel
         public ICommand DownloadCommand { get; set; }
         public ICommand AboutCommand { get; set; }
         public ICommand UncheckAllCommand { get; }
-        public ICommand SettingsCommand { get; set; }
         public ICommand ClearListCommand { get; }
         public ICommand SaveDownloadPathCommand { get; }
         public ICommand SaveSevenZipLibraryPathCommand { get; }
@@ -86,11 +97,30 @@ namespace TenekDownloader.viewModel
             AddLinksCommand = new DelegateCommand(AddLinks, ReturnTrue);
             AboutCommand = new DelegateCommand(About, ReturnTrue);
             DownloadCommand = new DelegateCommand(Download, ReturnTrue);
-            SettingsCommand = new DelegateCommand(SettingsWindow, ReturnTrue);
             UncheckAllCommand = new DelegateCommand(UncheckAll, ReturnTrue);
             ClearListCommand = new DelegateCommand(ClearList, ReturnTrue);
             SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath, ReturnTrue);
             SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath, ReturnTrue);
+
+            LoadObjectFromFile();
+        }
+
+        private void LoadObjectFromFile()
+        {
+            if (!File.Exists("config.json")) return;
+            Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>("config.json");
+            foreach (var downloadGroup in Groups)
+            {
+                foreach (var downloadGroupEntity in downloadGroup.Entities)
+                {
+                    downloadGroupEntity.DownloadGroup = downloadGroup;
+                }
+            }
+        }
+
+        private void SaveGroupsToFile()
+        {
+            SerializerUtils.WriteToJsonFile("config.json",Groups);
         }
 
         public bool ReturnTrue()
@@ -115,8 +145,7 @@ namespace TenekDownloader.viewModel
 
         private void SaveSevenZipLibraryPath()
         {
-            var dialog = new System.Windows.Forms.OpenFileDialog();
-            dialog.Filter = "7-z library|7z.dll";
+            var dialog = new System.Windows.Forms.OpenFileDialog {Filter = "7-z library|7z.dll"};
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 SevenZipLibraryLocation = dialog.SafeFileName;
@@ -141,28 +170,64 @@ namespace TenekDownloader.viewModel
                     ManyArchives = LinksHelper.HasManyArchives
                 };
                 Groups.Add(group);
+                foreach (var downloadEntity in @group.Entities)
+                {
+                    DownloadService.DownloadQueue.Enqueue(downloadEntity);
+                }
             }
             else
             {
                 foreach (var link in links)
                 {
-                    var group = new DownloadGroup(new List<string> {link},String.Empty,LinksHelper.IsCompressed);
+                    var group = new DownloadGroup(new List<string> {link},string.Empty,LinksHelper.IsCompressed);
                     Groups.Add(group);
+                    foreach (var downloadEntity in @group.Entities)
+                    {
+                        DownloadService.DownloadQueue.Enqueue(downloadEntity);
+                    }
                 }
             }
-
+            RaisePropertyChanged(nameof(Entities));
+            LinksHelper = new LinksHelper();
+            SaveGroupsToFile();
             ShowNotification();
         }
 
         private static void ShowNotification()
         {
-            throw  new NotImplementedException();
-        }
+            ToastContent toastContent = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new AdaptiveText()
+                            {
+                                Text = "Matt sent you a friend request"
+                            },
+                            new AdaptiveText()
+                            {
+                                Text = "Hey, wanna dress up as wizards and ride around on our hoverboards together?"
+                            }
+                        },
+                        AppLogoOverride = new ToastGenericAppLogo()
+                        {
+                            Source = "https://unsplash.it/64?image=1005",
+                            HintCrop = ToastGenericAppLogoCrop.Circle
+                        }
+                    }
+                }
+            };
 
-        public void SettingsWindow()
-        {
-            var window = new SettingsWindow();
-            window.ShowDialog();
+
+            var xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+            xmlDoc.LoadXml(toastContent.GetContent());
+
+            var toast = new ToastNotification(xmlDoc);
+            ToastNotificationManager.CreateToastNotifier("tet").Show(toast);
+
         }
 
         public void About()

@@ -48,7 +48,7 @@ namespace TenekDownloader.link.imp
 
         private void GetDirectLinkFromLink()
         {
-            var js = GetJavaScriptSection().Replace("document.getElementById('dlbutton')", "zippyObj").Replace("document.getElementById('fimage')", "dummy");
+            var js = GetJavaScriptSection().Replace("document.getElementById('dlbutton')", "zippyObj").Replace("document.getElementById('omg').getAttribute('class')","2").Replace("document.getElementById('fimage')", "dummy");
 
             var jsScript = string.Format(JS_FORMAT, js);
             var link = "";

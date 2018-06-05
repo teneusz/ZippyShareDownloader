@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Prism.Mvvm;
 using TenekDownloader.link.model;
 
@@ -23,6 +24,11 @@ namespace TenekDownloader.download.model
             };
         }
 
+        public DownloadEntity()
+        {
+
+        }
+
         public LinkInfo LinkInfo
         {
             get => _linkInfo;
@@ -41,8 +47,10 @@ namespace TenekDownloader.download.model
             set => SetProperty(ref _downloadPercent, value);
         }
 
-        public DownloadGroup  DownloadGroup { get;set;}
-        public string GroupName => DownloadGroup.Name;
+        [JsonIgnore]
+        public DownloadGroup DownloadGroup { get; set; }
+
+        public string GroupName => DownloadGroup?.Name;
         public Action<object> AfterDownload { get; set; }
 
         public Action<object> StartDownload { get; set; }
@@ -69,6 +77,8 @@ namespace TenekDownloader.download.model
             }
             return result;
         }
+
+        public int ExtractProgress => DownloadGroup.ExtractProgress;
 
         public const string Http = "http://";
         public const string Https = "https://";

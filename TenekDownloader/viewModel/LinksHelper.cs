@@ -13,12 +13,12 @@ namespace TenekDownloader.viewModel
         private bool _isCompressed = true;
         private string _name;
         private bool _hasManyArchives;
-        private bool _isInGroup;
+        private bool _isInGroup = true;
 
         public string Links
         {
             get => _links;
-            set => SetProperty(ref _links, value);
+            set => SetProperty(ref _links, value.Replace("\n\n","\n"));
         }
 
         public bool IsCompressed

@@ -4,8 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-        xmlns:xcdg="http://schemas.xceed.com/wpf/xaml/datagrid"
-        xmlns:local="clr-namespace:TenekDownloader"
         xmlns:viewModel="clr-namespace:TenekDownloader.viewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="672.8">
@@ -16,10 +14,8 @@
         <Menu IsMainMenu="True" DockPanel.Dock="Top">
             <MenuItem Header="File">
                 <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-                <MenuItem Header="Settings" Command="{Binding SettingsCommand}"/>
             </MenuItem>
             <MenuItem Header="Download">
-                <MenuItem Header="Add links" Command="{Binding AddLinksCommand}"/>
                 <MenuItem Header="Start download" Command="{Binding DownloadCommand}"/>
             </MenuItem>
             <MenuItem Header="View">
@@ -43,12 +39,19 @@
                         <DataGridTextColumn Header="Service Name" Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}" IsReadOnly="True"/>
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True"/>
-
                         <DataGridTemplateColumn Header="Progress">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <ProgressBar Maximum="100" Minimum="0"  Value="{Binding Path=DownloadPercent, Mode=OneWay, Delay=1000}" Margin="-8,0,7.8,0"/>
+                                    <ProgressBar Maximum="100" Minimum="0"  Value="{Binding DownloadPercent, Mode=OneWay, Delay=1000}"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Header="Extracting">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ProgressBar Maximum="100" Minimum="0"  Value="{Binding DownloadGroup.ExtractProgress, Mode=OneWay, Delay=1000}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -69,11 +72,16 @@
             <TabItem Header="Add links">
                 <Grid Background="#FFE5E5E5">
                     <xctk:RichTextBox  Margin="10,10,9,102.6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                                    x:Name="TextBox" Text="{Binding LinksHelper.Links}" />
-                        <UniformGrid Margin="10,0,42,9.6" Height="88" VerticalAlignment="Bottom" Rows="3">
+                                    x:Name="TextBox" Text="{Binding LinksHelper.Links}" >
+                        <xctk:RichTextBox.TextFormatter>
+                            <xctk:PlainTextFormatter />
+                        </xctk:RichTextBox.TextFormatter>
+
+                    </xctk:RichTextBox>
+                    <UniformGrid Margin="10,0,42,9.6" Height="88" VerticalAlignment="Bottom" Rows="3">
                         <CheckBox Content="Dodaj jako grupa" VerticalAlignment="Top" HorizontalAlignment="Left"
                                     Width="111" x:Name="IsInGroup" IsChecked="{Binding LinksHelper.IsInGroup}" />
-                        <TextBox Text="{Binding LinksHelper.IsInGroup}" Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=IsInGroup}"  Margin="0,0,-0.2,-0.6"  />
+                        <TextBox Text="{Binding LinksHelper.Name}" Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=IsInGroup}"  Margin="0,0,-0.2,-0.6"  />
                         <CheckBox Content="Wypakuj" VerticalAlignment="Top" HorizontalAlignment="Left"
                                     Width="239" x:Name="IsDecompressedAfter" IsChecked="{Binding LinksHelper.IsCompressed}" Margin="0,0.4,-117.4,0" />
                         <Button  Content="Add" Command="{Binding AddLinksCommand}" Height="19" VerticalAlignment="Bottom"
@@ -81,10 +89,8 @@
                     </UniformGrid>
                 </Grid>
             </TabItem>
-            <TabItem Header="TabItem">
-                <Grid Background="#FFE5E5E5"/>
-            </TabItem>
         </TabControl>
 
     </DockPanel>
 </Window>
+
