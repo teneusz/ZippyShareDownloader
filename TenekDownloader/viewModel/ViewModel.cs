@@ -115,9 +115,11 @@ namespace TenekDownloader.viewModel
                 foreach (var downloadGroupEntity in downloadGroup.Entities)
                 {
                     downloadGroupEntity.DownloadGroup = downloadGroup;
+                    DownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
                 }
             }
-            if(SettingHelper.AutoDownload) DownloadService.Download();
+
+            if (SettingHelper.AutoDownload) Download();
         }
 
         private void SaveGroupsToFile()
@@ -192,7 +194,7 @@ namespace TenekDownloader.viewModel
             LinksHelper = new LinksHelper();
             SaveGroupsToFile();
             ShowNotification();
-            if(!DownloadService.Downloading && SettingHelper.AutoDownload) DownloadService.Download();
+            if(!DownloadService.Downloading && SettingHelper.AutoDownload) Download();
         }
 
         private static void ShowNotification()
