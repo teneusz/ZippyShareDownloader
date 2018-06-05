@@ -149,24 +149,5 @@ namespace TenekDownloader.util
             return result;
         }
 
-        public static void SaveConfig(ConfigHelper entities)
-        {
-            WriteToJsonFile("configs.json", entities);
-        }
-
-        public static ConfigHelper LoadConfig()
-        {
-            if (!File.Exists("configs.json")) return new ConfigHelper();
-            var result = ReadFromJsonFile<ConfigHelper>("configs.json");
-            result.DownloadGroups.ForEach(group => group.Entities.ToList().ForEach(entity =>
-                entity.Status =
-                    entity.Status == DownloadStatus.Downloading
-                        ? DownloadStatus.Waiting
-                        : entity.Status
-            ));
-
-
-            return result;
-        }
     }
 }

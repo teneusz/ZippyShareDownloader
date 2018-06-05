@@ -28,6 +28,7 @@ namespace TenekDownloader.viewModel
         private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
         private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
         private LinksHelper _linksHelper = new LinksHelper();
+        public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
 
         public LinksHelper LinksHelper
         {
@@ -156,7 +157,6 @@ namespace TenekDownloader.viewModel
         {
             //_downloadingCount--;
             Download();
-            SerializerUtils.SaveConfig(new ConfigHelper() {DownloadGroups = this.Groups.ToList()});
         }
 
         public void AddLinks()
@@ -191,6 +191,7 @@ namespace TenekDownloader.viewModel
             LinksHelper = new LinksHelper();
             SaveGroupsToFile();
             ShowNotification();
+            if(!DownloadService.Downloading && SettingHelper.AutoDownload) DownloadService.Download();
         }
 
         private static void ShowNotification()

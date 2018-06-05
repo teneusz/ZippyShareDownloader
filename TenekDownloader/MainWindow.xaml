@@ -61,11 +61,12 @@
             <TabItem Header="Settings">
                 <Grid Background="#FFE5E5E5">
                     <Label Content="Download Path" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-                    <TextBox Height="23" Margin="10,40,36.6,0" TextWrapping="Wrap" Text="{Binding Path=DownloadLocation}" VerticalAlignment="Top"/>
+                    <TextBox Height="23" Margin="10,40,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SettingHelper.DownloadPath}" VerticalAlignment="Top"/>
                     <Button Content="..." HorizontalAlignment="Right" Margin="0,40,9.6,0" VerticalAlignment="Top" Width="22" Height="23"  Command="{Binding SaveDownloadPathCommand}"/>
                     <Label Content="7z.dll (x86)" HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top" />
-                    <TextBox Height="23" Margin="10,109,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SevenZipLibraryLocation}" VerticalAlignment="Top"/>
+                    <TextBox Height="23" Margin="10,109,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SettingHelper.SevenZipLibraryLocation}" VerticalAlignment="Top"/>
                     <Button Content="..." HorizontalAlignment="Right" Margin="0,109,9.6,0" VerticalAlignment="Top" Width="22" Height="23"  Command="{Binding SaveSevenZipLibraryPathCommand}"/>
+                    <CheckBox Content="Auto download"  IsChecked="{Binding Path=SettingHelper.AutoDownload}" HorizontalAlignment="Left" Margin="10,151,0,0" VerticalAlignment="Top"/>
 
                 </Grid>
             </TabItem>

@@ -108,7 +108,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="download\DownloadService.cs" />
-    <Compile Include="download\model\ConfigHelper.cs" />
+    <Compile Include="download\model\SettingsHelper.cs" />
     <Compile Include="util\FileUtil.cs" />
     <Compile Include="util\SerializerUtils.cs" />
     <Compile Include="util\ArchiveUtil.cs" />
