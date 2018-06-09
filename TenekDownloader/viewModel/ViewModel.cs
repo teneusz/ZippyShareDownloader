@@ -9,8 +9,8 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
 using Windows.UI.Notifications;
+
 using Microsoft.Toolkit.Uwp.Notifications;
-//using Windows.UI.Notifications;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
@@ -66,6 +66,7 @@ namespace TenekDownloader.viewModel
         public ICommand ClearListCommand { get; }
         public ICommand SaveDownloadPathCommand { get; }
         public ICommand SaveSevenZipLibraryPathCommand { get; }
+        public ICommand TestCommand { get; }
 
         public string SevenZipLibraryLocation
         {
@@ -94,7 +95,7 @@ namespace TenekDownloader.viewModel
 
         public ViewModel()
         {
-            ExitCommand = new DelegateCommand(Exit, ReturnTrue);
+            ExitCommand = new DelegateCommand(Exit);
             AddLinksCommand = new DelegateCommand(AddLinks, ReturnTrue);
             AboutCommand = new DelegateCommand(About, ReturnTrue);
             DownloadCommand = new DelegateCommand(Download, ReturnTrue);
@@ -102,6 +103,7 @@ namespace TenekDownloader.viewModel
             ClearListCommand = new DelegateCommand(ClearList, ReturnTrue);
             SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath, ReturnTrue);
             SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath, ReturnTrue);
+            TestCommand = new DelegateCommand(ShowNotification);
 
             LoadObjectFromFile();
         }
@@ -197,42 +199,53 @@ namespace TenekDownloader.viewModel
             if(!DownloadService.Downloading && SettingHelper.AutoDownload) Download();
         }
 
-        private static void ShowNotification()
+        private void ShowNotification()
         {
-            ToastContent toastContent = new ToastContent()
-            {
-                Visual = new ToastVisual()
-                {
-                    BindingGeneric = new ToastBindingGeneric()
-                    {
-                        Children =
-                        {
-                            new AdaptiveText()
-                            {
-                                Text = "Matt sent you a friend request"
-                            },
-                            new AdaptiveText()
-                            {
-                                Text = "Hey, wanna dress up as wizards and ride around on our hoverboards together?"
-                            }
-                        },
-                        AppLogoOverride = new ToastGenericAppLogo()
-                        {
-                            Source = "https://unsplash.it/64?image=1005",
-                            HintCrop = ToastGenericAppLogoCrop.Circle
-                        }
-                    }
-                }
-            };
-
-
-            var xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
-            xmlDoc.LoadXml(toastContent.GetContent());
-
-            var toast = new ToastNotification(xmlDoc);
-            ToastNotificationManager.CreateToastNotifier("tet").Show(toast);
-
+//            var message = "Sample message";
+//            var xml = $"<?xml version=\"1.0\"?><toast><visual><binding template=\"ToastText01\"><text id=\"1\">{message}</text></binding></visual></toast>";
+//            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
+//            toastXml.LoadXml(xml);
+//            var toast = new ToastNotification(toastXml);
+//            ToastNotificationManager.CreateToastNotifier().Show(toast);
         }
+
+//        private static void ShowNotification()
+//        {
+//            ToastContent toastContent = new ToastContent()
+//            {
+//                Visual = new ToastVisual()
+//                {
+//                    BindingGeneric = new ToastBindingGeneric()
+//                    {
+//                        Children =
+//                        {
+//                            new AdaptiveText()
+//                            {
+//                                Text = "Matt sent you a friend request"
+//                            },
+//                            new AdaptiveText()
+//                            {
+//                                Text = "Hey, wanna dress up as wizards and ride around on our hoverboards together?"
+//                            }
+//                        },
+//                        AppLogoOverride = new ToastGenericAppLogo()
+//                        {
+//                            Source = "https://unsplash.it/64?image=1005",
+//                            HintCrop = ToastGenericAppLogoCrop.Circle
+//                        }
+//                    }
+//                }
+//            };
+//
+//
+//            var xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
+//            xmlDoc.LoadXml(toastContent.GetContent());
+//
+//            var toast = new ToastNotification(xmlDoc);
+//            var not =  ToastNotificationManager.GetDefault().CreateToastNotifier();
+//                not.Show(toast);
+//
+//        }
 
         public void About()
         {
@@ -240,23 +253,24 @@ namespace TenekDownloader.viewModel
 
         public void UncheckAll()
         {
-//            foreach (var entity in _downloads)
-//            {
-//                entity.SaveToFile = false;
-//            }
+            foreach (var entity in Groups)
+            {
+                entity.IsSerialized = false;
+            }
         }
 
         public void ClearList()
         {
-//            foreach (var entity in _downloads.ToList())
-//            {
-//                if (!entity.Status.Equals(DownloadStatus.Downloading))
-//                {
-//                    _downloads.Remove(entity);
-//                }
-//            }
-//
-//            SerializerUtils.SaveConfig(new App.ConfigHelper() { DownloadGroups = this.DownloadGroups });
+            foreach (var entity in Groups.ToList())
+            {
+                if (!entity.IsSerialized)
+                {
+                    Groups.Remove(entity);
+                }
+            }
+            RaisePropertyChanged(nameof(Entities));
+
+            SaveGroupsToFile();
         }
 
         public void Exit()

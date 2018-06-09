@@ -16,6 +16,12 @@ namespace TenekDownloader.download.model
         private bool? _unpack;
         public bool ManyArchives;
 
+        public bool IsSerialized
+        {
+            get => _isSerialized;
+            set => SetProperty(ref _isSerialized, value);
+        }
+
         public int ExtractProgress
         {
             get => _extractProgress;
@@ -53,6 +59,7 @@ namespace TenekDownloader.download.model
         private bool _isAutoExtracting = false;
         private bool _isMoreThanOneArchive = false;
         private int _extractProgress;
+        private bool _isSerialized = true;
         public string DownloadLocation { get=>_downloadLocation; set=>SetProperty(ref _downloadLocation,value); }
 
         public bool IsAutoExtracting

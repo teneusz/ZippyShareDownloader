@@ -25,6 +25,7 @@
             <MenuItem Header="Help">
                 <MenuItem Header="About"/>
             </MenuItem>
+            <MenuItem Header="test" Command="{Binding TestCommand}"/>
         </Menu>
 
 
@@ -34,6 +35,7 @@
                 <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
                           ItemsSource="{Binding Entities}" SelectionUnit="Cell" CanUserAddRows="false" Margin="0,0,0,0">
                     <DataGrid.Columns>
+                        <DataGridCheckBoxColumn Header="Serialize" Binding="{Binding DownloadGroup.IsSerialized}"/>
                         <DataGridTextColumn Header="File Name" Binding="{Binding LinkInfo.FileName}" />
                         <DataGridTextColumn Header="Group Name" Binding="{Binding GroupName}" />
                         <DataGridTextColumn Header="Service Name" Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True"/>
