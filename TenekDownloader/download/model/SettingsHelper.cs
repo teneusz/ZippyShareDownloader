@@ -5,11 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Prism.Mvvm;
 using TenekDownloader.Properties;
+using TenekDownloader.view.model;
+
 namespace TenekDownloader.download.model
 {
     public class SettingsHelper: BindableBase
     {
-        private static Settings Settings => Settings.Default; 
+	    private static Settings Settings => Settings.Default; 
 
         public string DownloadPath
         {
@@ -20,7 +22,7 @@ namespace TenekDownloader.download.model
                 var downloadLocation = Settings.DownloadLocation;
                 SetProperty(ref downloadLocation, value);
             }
-            get => Properties.Settings.Default.DownloadLocation;
+            get => Settings.DownloadLocation;
         }
         public string SevenZipLibraryLocation
         {
@@ -44,5 +46,17 @@ namespace TenekDownloader.download.model
                 Settings.Save();
             }
         }
+
+	    public ColumnVisible ColumnVisible
+	    {
+		    get => Settings.ColumnVisiblity??new ColumnVisible();
+		    set
+		    {
+			    Settings.ColumnVisiblity = value;
+				 Settings.Save();
+			    var settingsColumnVisiblity = Settings.ColumnVisiblity;
+			    SetProperty(ref settingsColumnVisiblity, value);
+		    }
+	    }
     }
 }

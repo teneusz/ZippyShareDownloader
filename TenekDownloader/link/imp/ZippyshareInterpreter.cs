@@ -22,11 +22,21 @@ namespace TenekDownloader.link.imp
         public void ProcessLink(string link)
         {
             LinkInfo = new LinkInfo { ServiceName = "ZippyShare", OrignalLink = link };
-            DownloadPage();
-            GetDirectLinkFromLink();
-            ProcessFileName();
-            ProcessFileSize();
-            CheckFileExistnce();
+	        try
+	        {
+		        DownloadPage();
+		        GetDirectLinkFromLink();
+		        ProcessFileName();
+		        ProcessFileSize();
+		        CheckFileExistnce();
+	        }
+	        catch (WebException ex)
+	        {
+		        if (ex.Status == WebExceptionStatus.Timeout)
+		        {
+			        LinkInfo.BackToQueue = true;
+		        }
+	        }
         }
 
         private void DownloadPage()
@@ -41,7 +51,7 @@ namespace TenekDownloader.link.imp
             {
                 if (link.Length > 0)
                 {
-                    _htmlCode = client.DownloadString(link);
+	                _htmlCode = client.DownloadString(link);
                 }
             }
         }

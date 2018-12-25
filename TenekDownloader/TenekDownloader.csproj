@@ -37,6 +37,9 @@
     <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FileDownloader">
+      <HintPath>D:\dll\FileDownloader.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
     </Reference>
@@ -107,13 +110,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="download\DownloadService.cs" />
+    <Compile Include="download\service\AbstractDownloadService.cs" />
+    <Compile Include="download\service\Base64.cs" />
+    <Compile Include="download\service\Cache.cs" />
+    <Compile Include="download\service\CachObject.cs" />
+    <Compile Include="download\service\DownloadService.cs" />
+    <Compile Include="download\service\DownloadServiceSecondVersion.cs" />
     <Compile Include="download\model\SettingsHelper.cs" />
+    <Compile Include="util\dlc\DlcContainer.cs" />
+    <Compile Include="util\dlc\DlcContent.cs" />
     <Compile Include="util\FileUtil.cs" />
     <Compile Include="util\SerializerUtils.cs" />
     <Compile Include="util\ArchiveUtil.cs" />
+    <Compile Include="util\dlc\Tools.cs" />
     <Compile Include="viewModel\ViewModel.cs" />
     <Compile Include="viewModel\LinksHelper.cs" />
+    <Compile Include="view\converter\AnythingToVsibleConverter.cs" />
+    <Compile Include="view\model\ColumnVisible.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -163,8 +176,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="view\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

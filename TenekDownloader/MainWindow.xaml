@@ -5,95 +5,121 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:viewModel="clr-namespace:TenekDownloader.viewModel"
+		  xmlns:my-converter="clr-namespace:TenekDownloader.view.converter"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="672.8">
-    <Window.DataContext>
-        <viewModel:ViewModel></viewModel:ViewModel>
-    </Window.DataContext>
-    <DockPanel>
-        <Menu IsMainMenu="True" DockPanel.Dock="Top">
-            <MenuItem Header="File">
-                <MenuItem Header="Exit" Command="{Binding ExitCommand}"/>
-            </MenuItem>
-            <MenuItem Header="Download">
-                <MenuItem Header="Start download" Command="{Binding DownloadCommand}"/>
-            </MenuItem>
-            <MenuItem Header="View">
-                <MenuItem Header="Clear list" Command="{Binding ClearListCommand}"/>
-                <MenuItem Header="Uncheck all" Command="{Binding UncheckAllCommand}"/>
-            </MenuItem>
-            <MenuItem Header="Help">
-                <MenuItem Header="About"/>
-            </MenuItem>
-            <MenuItem Header="test" Command="{Binding TestCommand}"/>
-        </Menu>
+	 <Window.DataContext>
+		  <viewModel:ViewModel />
+	 </Window.DataContext>
+	 <DockPanel>
+		<Menu IsMainMenu="True" DockPanel.Dock="Top">
+			<MenuItem Header="File">
+				<MenuItem Header="Exit" Command="{Binding ExitCommand}" />
+			</MenuItem>
+			<MenuItem Header="Download">
+				<MenuItem Header="Start download" Command="{Binding DownloadCommand}" />
+			</MenuItem>
+			<MenuItem Header="View">
+				<MenuItem Header="Clear list" Command="{Binding ClearListCommand}" />
+				<MenuItem Header="Uncheck all" Command="{Binding UncheckAllCommand}" />
+			</MenuItem>
+			<MenuItem Header="Help">
+				<MenuItem Header="About" />
+			</MenuItem>
+			<MenuItem Header="test" Command="{Binding TestCommand}" />
+		</Menu>
 
+		<ProgressBar HorizontalAlignment="Left" VerticalAlignment="Top" />
+		<TabControl Margin="0,0,0,0">
+			<TabItem Header="Downloads">
+				<DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
+				          ItemsSource="{Binding Entities}" SelectionUnit="Cell" CanUserAddRows="false" Margin="0,0,0,0">
+					<DataGrid.Columns>
+						<DataGridCheckBoxColumn Header="Serialize"
+														Visibility="{Binding SettingHelper.ColumnVisible.Serializable}"
+						                        Binding="{Binding DownloadGroup.IsSerialized}" />
+						<DataGridTextColumn Header="File Name"
+						                    Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
+						                    Binding="{Binding LinkInfo.FileName}" />
+						<DataGridTextColumn Header="Group Name" 
+						                    Visibility="{Binding SettingHelper.ColumnVisible.GroupName}"
+						                    Binding="{Binding GroupName}" />
+						<DataGridTextColumn Header="Service Name"
+												  Visibility="Hidden"
+						                    Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True" />
+						<DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}" IsReadOnly="True" />
+						<DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}" IsReadOnly="True" />
+						<DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}" IsReadOnly="True" />
+								<DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
+								<DataGridTemplateColumn Header="Progress">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<ProgressBar Maximum="100" Minimum="0" Value="{Binding DownloadPercent, Mode=OneWay, Delay=1000}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="Extracting">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<ProgressBar Maximum="100" Minimum="0"
+									             Value="{Binding DownloadGroup.ExtractProgress, Mode=OneWay, Delay=1000}" />
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+						<DataGridTemplateColumn Header="Pause">
+							<DataGridTemplateColumn.CellTemplate>
+								<DataTemplate>
+									<Button Command="{Binding PauseDownload}">pause</Button>
+								</DataTemplate>
+							</DataGridTemplateColumn.CellTemplate>
+						</DataGridTemplateColumn>
+					</DataGrid.Columns>
+				</DataGrid>
+			</TabItem>
+			<TabItem Header="Settings">
+				<Grid Background="#FFE5E5E5">
+					<Label Content="Download Path" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
+					<TextBox Height="23" Margin="10,40,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SettingHelper.DownloadPath}"
+					         VerticalAlignment="Top" />
+					<Button Content="..." HorizontalAlignment="Right" Margin="0,40,9.6,0" VerticalAlignment="Top" Width="22"
+					        Height="23" Command="{Binding SaveDownloadPathCommand}" />
+					<Label Content="7z.dll (x86)" HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top" />
+					<TextBox Height="23" Margin="10,109,36.6,0" TextWrapping="Wrap"
+					         Text="{Binding Path=SettingHelper.SevenZipLibraryLocation}" VerticalAlignment="Top" />
+					<Button Content="..." HorizontalAlignment="Right" Margin="0,109,9.6,0" VerticalAlignment="Top" Width="22"
+					        Height="23" Command="{Binding SaveSevenZipLibraryPathCommand}" />
+					<CheckBox Content="Auto download" IsChecked="{Binding Path=SettingHelper.AutoDownload}" HorizontalAlignment="Left"
+					          Margin="10,151,0,0" VerticalAlignment="Top" />
 
-        <ProgressBar HorizontalAlignment="Left"  VerticalAlignment="Top"/>
-        <TabControl Margin="0,0,0,0">
-            <TabItem Header="Downloads">
-                <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
-                          ItemsSource="{Binding Entities}" SelectionUnit="Cell" CanUserAddRows="false" Margin="0,0,0,0">
-                    <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="Serialize" Binding="{Binding DownloadGroup.IsSerialized}"/>
-                        <DataGridTextColumn Header="File Name" Binding="{Binding LinkInfo.FileName}" />
-                        <DataGridTextColumn Header="Group Name" Binding="{Binding GroupName}" />
-                        <DataGridTextColumn Header="Service Name" Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True"/>
-                        <DataGridTemplateColumn Header="Progress">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ProgressBar Maximum="100" Minimum="0"  Value="{Binding DownloadPercent, Mode=OneWay, Delay=1000}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="Extracting">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <ProgressBar Maximum="100" Minimum="0"  Value="{Binding DownloadGroup.ExtractProgress, Mode=OneWay, Delay=1000}"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-            </TabItem>
-            <TabItem Header="Settings">
-                <Grid Background="#FFE5E5E5">
-                    <Label Content="Download Path" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" />
-                    <TextBox Height="23" Margin="10,40,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SettingHelper.DownloadPath}" VerticalAlignment="Top"/>
-                    <Button Content="..." HorizontalAlignment="Right" Margin="0,40,9.6,0" VerticalAlignment="Top" Width="22" Height="23"  Command="{Binding SaveDownloadPathCommand}"/>
-                    <Label Content="7z.dll (x86)" HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top" />
-                    <TextBox Height="23" Margin="10,109,36.6,0" TextWrapping="Wrap" Text="{Binding Path=SettingHelper.SevenZipLibraryLocation}" VerticalAlignment="Top"/>
-                    <Button Content="..." HorizontalAlignment="Right" Margin="0,109,9.6,0" VerticalAlignment="Top" Width="22" Height="23"  Command="{Binding SaveSevenZipLibraryPathCommand}"/>
-                    <CheckBox Content="Auto download"  IsChecked="{Binding Path=SettingHelper.AutoDownload}" HorizontalAlignment="Left" Margin="10,151,0,0" VerticalAlignment="Top"/>
+					 </Grid>
+			</TabItem>
+			<TabItem Header="Add links">
+				<Grid Background="#FFE5E5E5">
+					<xctk:RichTextBox Margin="10,10,9,102.6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+					                  x:Name="TextBox" Text="{Binding LinksHelper.Links}">
+						<xctk:RichTextBox.TextFormatter>
+							<xctk:PlainTextFormatter />
+						</xctk:RichTextBox.TextFormatter>
 
-                </Grid>
-            </TabItem>
-            <TabItem Header="Add links">
-                <Grid Background="#FFE5E5E5">
-                    <xctk:RichTextBox  Margin="10,10,9,102.6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
-                                    x:Name="TextBox" Text="{Binding LinksHelper.Links}" >
-                        <xctk:RichTextBox.TextFormatter>
-                            <xctk:PlainTextFormatter />
-                        </xctk:RichTextBox.TextFormatter>
+					</xctk:RichTextBox>
+					<UniformGrid Margin="10,0,42,9.6" Height="88" VerticalAlignment="Bottom" Rows="3">
+						<CheckBox Content="Dodaj jako grupa" VerticalAlignment="Top" HorizontalAlignment="Left"
+						          Width="111" x:Name="IsInGroup" IsChecked="{Binding LinksHelper.IsInGroup}" />
+						<TextBox Text="{Binding LinksHelper.Name}" Height="23" TextWrapping="Wrap" x:Name="GroupName"
+						         VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=IsInGroup}" Margin="0,0,-0.2,-0.6" />
+						<CheckBox Content="Wypakuj" VerticalAlignment="Top" HorizontalAlignment="Left"
+						          Width="239" x:Name="IsDecompressedAfter" IsChecked="{Binding LinksHelper.IsCompressed}"
+						          Margin="0,0.4,-117.4,0" />
+						<Button Content="Add" Command="{Binding AddLinksCommand}" Height="19" VerticalAlignment="Bottom"
+						        HorizontalAlignment="Left" Width="75" Margin="0,0,0,-0.4" />
+								<Button Content="Read from file" Command="{Binding DlcCommand}" Margin="-3,-0.4,207,10"/>
+						  </UniformGrid>
+				</Grid>
+			</TabItem>
+		</TabControl>
 
-                    </xctk:RichTextBox>
-                    <UniformGrid Margin="10,0,42,9.6" Height="88" VerticalAlignment="Bottom" Rows="3">
-                        <CheckBox Content="Dodaj jako grupa" VerticalAlignment="Top" HorizontalAlignment="Left"
-                                    Width="111" x:Name="IsInGroup" IsChecked="{Binding LinksHelper.IsInGroup}" />
-                        <TextBox Text="{Binding LinksHelper.Name}" Height="23" TextWrapping="Wrap" x:Name="GroupName" VerticalAlignment="Top" IsEnabled="{Binding IsChecked, ElementName=IsInGroup}"  Margin="0,0,-0.2,-0.6"  />
-                        <CheckBox Content="Wypakuj" VerticalAlignment="Top" HorizontalAlignment="Left"
-                                    Width="239" x:Name="IsDecompressedAfter" IsChecked="{Binding LinksHelper.IsCompressed}" Margin="0,0.4,-117.4,0" />
-                        <Button  Content="Add" Command="{Binding AddLinksCommand}" Height="19" VerticalAlignment="Bottom"
-                                HorizontalAlignment="Left" Width="75" Margin="0,0,0,-0.4" />
-                    </UniformGrid>
-                </Grid>
-            </TabItem>
-        </TabControl>
-
-    </DockPanel>
+	</DockPanel>
 </Window>
+
+
 

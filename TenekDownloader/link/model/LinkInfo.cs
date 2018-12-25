@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Animation;
 using Prism.Mvvm;
 
 namespace TenekDownloader.link.model
@@ -16,6 +17,13 @@ namespace TenekDownloader.link.model
         private string _fileName;
         private bool _isFileExists;
         private string _downloadLocation;
+	    private bool _backToQueue = false;
+
+	    public bool BackToQueue
+	    {
+		    get => _backToQueue;
+		    set => SetProperty(ref _backToQueue, value);
+	    }
 
         public string OrignalLink
         {

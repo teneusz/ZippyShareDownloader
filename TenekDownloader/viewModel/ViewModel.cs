@@ -9,7 +9,6 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Xml;
 using Windows.UI.Notifications;
-
 using Microsoft.Toolkit.Uwp.Notifications;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
@@ -19,263 +18,210 @@ using TenekDownloader.download.model;
 using TenekDownloader.link.model;
 using TenekDownloader.util;
 using Windows.Data.Xml;
-using Application = System.Windows.Application;
+using TenekDownloader.download.service;
+using TenekDownloader.util.dlc;
 
 namespace TenekDownloader.viewModel
 {
-    public class ViewModel : BindableBase
-    {
-        private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
-        private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
-        private LinksHelper _linksHelper = new LinksHelper();
-        public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
-
-        public LinksHelper LinksHelper
-        {
-            get => _linksHelper;
-            set => SetProperty(ref _linksHelper, value);
-        }
-
-        public ObservableCollection<DownloadGroup> Groups
-        {
-            get => _groups;
-            set => SetProperty(ref _groups, value);
-        }
-
-        public ObservableCollection<DownloadEntity> Entities
-        {
-            get
-            {
-                //TODO: No other idea :D
-                _entities.Clear();
-                foreach (var downloadGroup in Groups)
-                {
-                    _entities.AddRange(downloadGroup.Entities);
-                }
-
-                return _entities;
-            }
-            set => SetProperty(ref _entities, value);
-        }
-
-        public ICommand ExitCommand { get; set; }
-        public ICommand AddLinksCommand { get; set; }
-        public ICommand DownloadCommand { get; set; }
-        public ICommand AboutCommand { get; set; }
-        public ICommand UncheckAllCommand { get; }
-        public ICommand ClearListCommand { get; }
-        public ICommand SaveDownloadPathCommand { get; }
-        public ICommand SaveSevenZipLibraryPathCommand { get; }
-        public ICommand TestCommand { get; }
-
-        public string SevenZipLibraryLocation
-        {
-            get => Properties.Settings.Default.SevenZipDll;
-            set
-            {
-                Properties.Settings.Default.SevenZipDll = value;
-                Properties.Settings.Default.Save();
-                var defaultSevenZipDll = Properties.Settings.Default.SevenZipDll;
-                SetProperty(ref defaultSevenZipDll, value);
-            }
-        }
-
-        public string DownloadLocation
-        {
-            get => Properties.Settings.Default.DownloadLocation;
-            set
-            {
-                Properties.Settings.Default.DownloadLocation = value;
-                Properties.Settings.Default.Save();
-                var defaultDownloadLocation = Properties.Settings.Default.DownloadLocation;
-                SetProperty(ref defaultDownloadLocation, value);
-            }
-        }
+	public class ViewModel : BindableBase
+	{
+		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
+		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
+		private LinksHelper _linksHelper = new LinksHelper();
+		private const string ConfigJson = "config.json";
+		public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
+		public static AbstractDownloadService DownloadService = new DownloadServiceSecondVersion();
 
 
-        public ViewModel()
-        {
-            ExitCommand = new DelegateCommand(Exit);
-            AddLinksCommand = new DelegateCommand(AddLinks, ReturnTrue);
-            AboutCommand = new DelegateCommand(About, ReturnTrue);
-            DownloadCommand = new DelegateCommand(Download, ReturnTrue);
-            UncheckAllCommand = new DelegateCommand(UncheckAll, ReturnTrue);
-            ClearListCommand = new DelegateCommand(ClearList, ReturnTrue);
-            SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath, ReturnTrue);
-            SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath, ReturnTrue);
-            TestCommand = new DelegateCommand(ShowNotification);
+		public LinksHelper LinksHelper
+		{
+			get => _linksHelper;
+			set => SetProperty(ref _linksHelper, value);
+		}
 
-            LoadObjectFromFile();
-        }
+		public ObservableCollection<DownloadGroup> Groups
+		{
+			get => _groups;
+			set => SetProperty(ref _groups, value);
+		}
 
-        private void LoadObjectFromFile()
-        {
-            if (!File.Exists("config.json")) return;
-            Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>("config.json");
-            foreach (var downloadGroup in Groups)
-            {
-                foreach (var downloadGroupEntity in downloadGroup.Entities)
-                {
-                    downloadGroupEntity.DownloadGroup = downloadGroup;
-                    DownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
-                }
-            }
+		public ObservableCollection<DownloadEntity> Entities
+		{
+			get
+			{
+				//TODO: No other idea :D
+				_entities.Clear();
+				foreach (var downloadGroup in Groups)
+				{
+					_entities.AddRange(downloadGroup.Entities);
+				}
 
-            if (SettingHelper.AutoDownload) Download();
-        }
+				return _entities;
+			}
+			set => SetProperty(ref _entities, value);
+		}
 
-        private void SaveGroupsToFile()
-        {
-            SerializerUtils.WriteToJsonFile("config.json",Groups);
-        }
+		public ICommand ExitCommand { get; set; }
+		public ICommand AddLinksCommand { get; set; }
+		public ICommand DownloadCommand { get; set; }
+		public ICommand AboutCommand { get; set; }
+		public ICommand UncheckAllCommand { get; }
+		public ICommand ClearListCommand { get; }
+		public ICommand SaveDownloadPathCommand { get; }
+		public ICommand SaveSevenZipLibraryPathCommand { get; }
+		public ICommand TestCommand { get; }
+		public ICommand DlcCommand { get; }
 
-        public bool ReturnTrue()
-        {
-            return true;
-        }
+		public ViewModel()
+		{
+			ExitCommand = new DelegateCommand(Exit);
+			AddLinksCommand = new DelegateCommand(AddLinks);
+			AboutCommand = new DelegateCommand(About);
+			DownloadCommand = new DelegateCommand(Download);
+			UncheckAllCommand = new DelegateCommand(UncheckAll);
+			ClearListCommand = new DelegateCommand(ClearList);
+			SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
+			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
+			TestCommand = new DelegateCommand(ShowNotification);
+			DlcCommand = new DelegateCommand(ReadDlc);
 
-        public void Download()
-        {
-            DownloadService.Downloading = true;
-            DownloadService.Download();
-        }
+			LoadGroupsFromFile();
+		}
 
-        public void SaveDownloadPath()
-        {
-            var dialog = new FolderBrowserDialog();
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                DownloadLocation = dialog.SelectedPath + @"\";
-            }
-        }
+		private void LoadGroupsFromFile()
+		{
+			if (!File.Exists(ConfigJson)) return;
+			Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>(ConfigJson);
+			foreach (var downloadGroup in Groups)
+			{
+				foreach (var downloadGroupEntity in downloadGroup.Entities)
+				{
+					downloadGroupEntity.DownloadGroup = downloadGroup;
+					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
+				}
+			}
 
-        private void SaveSevenZipLibraryPath()
-        {
-            var dialog = new System.Windows.Forms.OpenFileDialog {Filter = "7-z library|7z.dll"};
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                SevenZipLibraryLocation = dialog.SafeFileName;
-            }
-        }
+			if (SettingHelper.AutoDownload) Download();
+		}
 
-        public void AfterDownload(object obj)
-        {
-            //_downloadingCount--;
-            Download();
-        }
+		private void SaveGroupsToFile()
+		{
+			SerializerUtils.WriteToJsonFile(ConfigJson, Groups.ToList().FindAll(e => e.IsSerialized));
+		}
 
-        public void AddLinks()
-        {
-            var links = LinksHelper.Links.Split('\n');
-            if (LinksHelper.IsInGroup)
-            {
-                var group = new DownloadGroup(new List<string>(links), LinksHelper.Name,
-                    LinksHelper.IsCompressed)
-                {
-                    ManyArchives = LinksHelper.HasManyArchives
-                };
-                Groups.Add(group);
-                foreach (var downloadEntity in @group.Entities)
-                {
-                    DownloadService.DownloadQueue.Enqueue(downloadEntity);
-                }
-            }
-            else
-            {
-                foreach (var link in links)
-                {
-                    var group = new DownloadGroup(new List<string> {link},string.Empty,LinksHelper.IsCompressed);
-                    Groups.Add(group);
-                    foreach (var downloadEntity in @group.Entities)
-                    {
-                        DownloadService.DownloadQueue.Enqueue(downloadEntity);
-                    }
-                }
-            }
-            RaisePropertyChanged(nameof(Entities));
-            LinksHelper = new LinksHelper();
-            SaveGroupsToFile();
-            ShowNotification();
-            if(!DownloadService.Downloading && SettingHelper.AutoDownload) Download();
-        }
+		public void Download()
+		{
+			AbstractDownloadService.Downloading = true;
+			new Task(DownloadService.Download).Start();
+		}
 
-        private void ShowNotification()
-        {
-//            var message = "Sample message";
-//            var xml = $"<?xml version=\"1.0\"?><toast><visual><binding template=\"ToastText01\"><text id=\"1\">{message}</text></binding></visual></toast>";
-//            var toastXml = new Windows.Data.Xml.Dom.XmlDocument();
-//            toastXml.LoadXml(xml);
-//            var toast = new ToastNotification(toastXml);
-//            ToastNotificationManager.CreateToastNotifier().Show(toast);
-        }
+		public void SaveDownloadPath()
+		{
+			var dialog = new FolderBrowserDialog();
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
+			}
+		}
 
-//        private static void ShowNotification()
-//        {
-//            ToastContent toastContent = new ToastContent()
-//            {
-//                Visual = new ToastVisual()
-//                {
-//                    BindingGeneric = new ToastBindingGeneric()
-//                    {
-//                        Children =
-//                        {
-//                            new AdaptiveText()
-//                            {
-//                                Text = "Matt sent you a friend request"
-//                            },
-//                            new AdaptiveText()
-//                            {
-//                                Text = "Hey, wanna dress up as wizards and ride around on our hoverboards together?"
-//                            }
-//                        },
-//                        AppLogoOverride = new ToastGenericAppLogo()
-//                        {
-//                            Source = "https://unsplash.it/64?image=1005",
-//                            HintCrop = ToastGenericAppLogoCrop.Circle
-//                        }
-//                    }
-//                }
-//            };
-//
-//
-//            var xmlDoc = new Windows.Data.Xml.Dom.XmlDocument();
-//            xmlDoc.LoadXml(toastContent.GetContent());
-//
-//            var toast = new ToastNotification(xmlDoc);
-//            var not =  ToastNotificationManager.GetDefault().CreateToastNotifier();
-//                not.Show(toast);
-//
-//        }
+		private void SaveSevenZipLibraryPath()
+		{
+			var dialog = new OpenFileDialog {Filter = "7-z library|7z.dll"};
+			if (dialog.ShowDialog() == DialogResult.OK)
+			{
+				SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
+			}
+		}
 
-        public void About()
-        {
-        }
+		public void AddLinks()
+		{
+			var links = LinksHelper.Links.Split('\n');
+			if (LinksHelper.IsInGroup)
+			{
+				var group = new DownloadGroup(new List<string>(links), LinksHelper.Name,
+					LinksHelper.IsCompressed)
+				{
+					ManyArchives = LinksHelper.HasManyArchives
+				};
+				Groups.Add(group);
+				foreach (var downloadEntity in @group.Entities)
+				{
+					AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
+				}
+			}
+			else
+			{
+				foreach (var link in links)
+				{
+					var group = new DownloadGroup(new List<string> {link}, string.Empty, LinksHelper.IsCompressed);
+					Groups.Add(group);
+					foreach (var downloadEntity in @group.Entities)
+					{
+						AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
+					}
+				}
+			}
 
-        public void UncheckAll()
-        {
-            foreach (var entity in Groups)
-            {
-                entity.IsSerialized = false;
-            }
-        }
+			RaisePropertyChanged(nameof(Entities));
+			LinksHelper = new LinksHelper();
+			SaveGroupsToFile();
+			ShowNotification();
+			if (!AbstractDownloadService.Downloading && SettingHelper.AutoDownload) Download();
+		}
 
-        public void ClearList()
-        {
-            foreach (var entity in Groups.ToList())
-            {
-                if (!entity.IsSerialized)
-                {
-                    Groups.Remove(entity);
-                }
-            }
-            RaisePropertyChanged(nameof(Entities));
+		private void ShowNotification()
+		{
+		}
 
-            SaveGroupsToFile();
-        }
+		private void ReadDlc()
+		{
+			var open = new OpenFileDialog {Filter = "DLC files (*.dlc)|*.dlc"};
+			var links = new List<string>();
+			if (open.ShowDialog() == DialogResult.OK)
+			{
+				LinksHelper.Links = string.Empty;
+				foreach (var packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files)
+				{
+					if (packageFile.URL.Trim() != String.Empty)
+					{
+						links.Add(packageFile.URL);
+					}
+				}
 
-        public void Exit()
-        {
-            Application.Current.Shutdown();
-        }
-    }
+				LinksHelper.Links = string.Join(Environment.NewLine, links);
+			}
+		}
+
+		public void About()
+		{
+		}
+
+		public void UncheckAll()
+		{
+			foreach (var entity in Groups)
+			{
+				entity.IsSerialized = false;
+			}
+		}
+
+		public void ClearList()
+		{
+			foreach (var entity in Groups.ToList())
+			{
+				if (!entity.IsSerialized)
+				{
+					Groups.Remove(entity);
+				}
+			}
+
+			RaisePropertyChanged(nameof(Entities));
+
+			SaveGroupsToFile();
+		}
+
+		public void Exit()
+		{
+			System.Windows.Application.Current.Shutdown();
+		}
+	}
 }
