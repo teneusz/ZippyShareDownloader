@@ -5,13 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:viewModel="clr-namespace:TenekDownloader.viewModel"
-		  xmlns:my-converter="clr-namespace:TenekDownloader.view.converter"
+        xmlns:my-converter="clr-namespace:TenekDownloader.view.converter"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="672.8">
-	 <Window.DataContext>
-		  <viewModel:ViewModel />
-	 </Window.DataContext>
-	 <DockPanel>
+	<Window.DataContext>
+		<viewModel:ViewModel />
+	</Window.DataContext>
+	<DockPanel>
 		<Menu IsMainMenu="True" DockPanel.Dock="Top">
 			<MenuItem Header="File">
 				<MenuItem Header="Exit" Command="{Binding ExitCommand}" />
@@ -36,22 +36,22 @@
 				          ItemsSource="{Binding Entities}" SelectionUnit="Cell" CanUserAddRows="false" Margin="0,0,0,0">
 					<DataGrid.Columns>
 						<DataGridCheckBoxColumn Header="Serialize"
-														Visibility="{Binding SettingHelper.ColumnVisible.Serializable}"
+						                        Visibility="{Binding SettingHelper.ColumnVisible.Serializable}"
 						                        Binding="{Binding DownloadGroup.IsSerialized}" />
 						<DataGridTextColumn Header="File Name"
 						                    Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
 						                    Binding="{Binding LinkInfo.FileName}" />
-						<DataGridTextColumn Header="Group Name" 
+						<DataGridTextColumn Header="Group Name"
 						                    Visibility="{Binding SettingHelper.ColumnVisible.GroupName}"
 						                    Binding="{Binding GroupName}" />
 						<DataGridTextColumn Header="Service Name"
-												  Visibility="Hidden"
+						                    Visibility="Hidden"
 						                    Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True" />
 						<DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}" IsReadOnly="True" />
 						<DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}" IsReadOnly="True" />
 						<DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}" IsReadOnly="True" />
-								<DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
-								<DataGridTemplateColumn Header="Progress">
+						<DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
+						<DataGridTemplateColumn Header="Progress">
 							<DataGridTemplateColumn.CellTemplate>
 								<DataTemplate>
 									<ProgressBar Maximum="100" Minimum="0" Value="{Binding DownloadPercent, Mode=OneWay, Delay=1000}" />
@@ -91,7 +91,7 @@
 					<CheckBox Content="Auto download" IsChecked="{Binding Path=SettingHelper.AutoDownload}" HorizontalAlignment="Left"
 					          Margin="10,151,0,0" VerticalAlignment="Top" />
 
-					 </Grid>
+				</Grid>
 			</TabItem>
 			<TabItem Header="Add links">
 				<Grid Background="#FFE5E5E5">
@@ -112,14 +112,11 @@
 						          Margin="0,0.4,-117.4,0" />
 						<Button Content="Add" Command="{Binding AddLinksCommand}" Height="19" VerticalAlignment="Bottom"
 						        HorizontalAlignment="Left" Width="75" Margin="0,0,0,-0.4" />
-								<Button Content="Read from file" Command="{Binding DlcCommand}" Margin="-3,-0.4,207,10"/>
-						  </UniformGrid>
+						<Button Content="Read from file" Command="{Binding DlcCommand}" Margin="-3,-0.4,207,10" />
+					</UniformGrid>
 				</Grid>
 			</TabItem>
 		</TabControl>
 
 	</DockPanel>
 </Window>
-
-
-

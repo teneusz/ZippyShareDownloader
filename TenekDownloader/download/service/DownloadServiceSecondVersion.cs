@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using FileDownloader;
 using TenekDownloader.download.model;
 using TenekDownloader.link;
-using TenekDownloader.util;
 
 namespace TenekDownloader.download.service
 {
@@ -27,7 +25,8 @@ namespace TenekDownloader.download.service
 					DownloadQueue.Enqueue(entity);
 					return;
 				}
-					 entity.Status = DownloadStatus.Downloading;
+
+				entity.Status = DownloadStatus.Downloading;
 				if (!entity.LinkInfo.IsFileExists)
 				{
 					AfterDownload();
@@ -64,7 +63,5 @@ namespace TenekDownloader.download.service
 			}
 			entity.FileDownloaderObj = fileDownloader;
 		}
-
-		
 	}
 }

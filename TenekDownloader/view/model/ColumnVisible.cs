@@ -1,23 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using Prism.Mvvm;
 
 namespace TenekDownloader.view.model
 {
 	public class ColumnVisible : BindableBase
 	{
-		private Visibility _serializable = Visibility.Visible;
+		private Visibility _downloadLink = Visibility.Visible;
 		private Visibility _fileName = Visibility.Collapsed;
 		private Visibility _groupName = Visibility.Hidden;
-		private Visibility _serviceName = Visibility.Visible;
-		private Visibility _serviceLink = Visibility.Visible;
-		private Visibility _downloadLink = Visibility.Visible;
-		private Visibility _status = Visibility.Visible;
 		private Visibility _progress = Visibility.Visible;
+		private Visibility _serializable = Visibility.Visible;
+		private Visibility _serviceLink = Visibility.Visible;
+		private Visibility _serviceName = Visibility.Visible;
+		private Visibility _status = Visibility.Visible;
 
 		public Visibility Serializable
 		{

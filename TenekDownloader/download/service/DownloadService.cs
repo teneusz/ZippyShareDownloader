@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using TenekDownloader.download.model;
 using TenekDownloader.link;
-using TenekDownloader.util;
 
 namespace TenekDownloader.download.service
 {
@@ -21,7 +18,7 @@ namespace TenekDownloader.download.service
 				var interpreter = ServicesEnum.ValueOf(entity.LinkInfo.ServiceName).CreateInstace();
 				interpreter.ProcessLink(entity.LinkInfo?.OrignalLink);
 				entity.LinkInfo = interpreter.LinkInfo;
-					 if (entity.LinkInfo.BackToQueue)
+				if (entity.LinkInfo.BackToQueue)
 				{
 					entity.Status = DownloadStatus.Waiting;
 					DownloadQueue.Enqueue(entity);

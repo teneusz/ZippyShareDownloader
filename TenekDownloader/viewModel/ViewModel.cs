@@ -3,34 +3,44 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
-using System.Xml;
-using Windows.UI.Notifications;
-using Microsoft.Toolkit.Uwp.Notifications;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
-using TenekDownloader.download;
 using TenekDownloader.download.model;
-using TenekDownloader.link.model;
-using TenekDownloader.util;
-using Windows.Data.Xml;
 using TenekDownloader.download.service;
+using TenekDownloader.util;
 using TenekDownloader.util.dlc;
+using Application = System.Windows.Application;
 
 namespace TenekDownloader.viewModel
 {
 	public class ViewModel : BindableBase
 	{
-		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
-		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
-		private LinksHelper _linksHelper = new LinksHelper();
 		private const string ConfigJson = "config.json";
-		public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
 		public static AbstractDownloadService DownloadService = new DownloadServiceSecondVersion();
+		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
+		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
+		private LinksHelper _linksHelper = new LinksHelper();
+
+		public ViewModel()
+		{
+			ExitCommand = new DelegateCommand(Exit);
+			AddLinksCommand = new DelegateCommand(AddLinks);
+			AboutCommand = new DelegateCommand(About);
+			DownloadCommand = new DelegateCommand(Download);
+			UncheckAllCommand = new DelegateCommand(UncheckAll);
+			ClearListCommand = new DelegateCommand(ClearList);
+			SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
+			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
+			TestCommand = new DelegateCommand(ShowNotification);
+			DlcCommand = new DelegateCommand(ReadDlc);
+
+			LoadGroupsFromFile();
+		}
+
+		public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
 
 
 		public LinksHelper LinksHelper
@@ -51,10 +61,7 @@ namespace TenekDownloader.viewModel
 			{
 				//TODO: No other idea :D
 				_entities.Clear();
-				foreach (var downloadGroup in Groups)
-				{
-					_entities.AddRange(downloadGroup.Entities);
-				}
+				foreach (var downloadGroup in Groups) _entities.AddRange(downloadGroup.Entities);
 
 				return _entities;
 			}
@@ -72,33 +79,15 @@ namespace TenekDownloader.viewModel
 		public ICommand TestCommand { get; }
 		public ICommand DlcCommand { get; }
 
-		public ViewModel()
-		{
-			ExitCommand = new DelegateCommand(Exit);
-			AddLinksCommand = new DelegateCommand(AddLinks);
-			AboutCommand = new DelegateCommand(About);
-			DownloadCommand = new DelegateCommand(Download);
-			UncheckAllCommand = new DelegateCommand(UncheckAll);
-			ClearListCommand = new DelegateCommand(ClearList);
-			SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
-			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
-			TestCommand = new DelegateCommand(ShowNotification);
-			DlcCommand = new DelegateCommand(ReadDlc);
-
-			LoadGroupsFromFile();
-		}
-
 		private void LoadGroupsFromFile()
 		{
 			if (!File.Exists(ConfigJson)) return;
 			Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>(ConfigJson);
 			foreach (var downloadGroup in Groups)
+			foreach (var downloadGroupEntity in downloadGroup.Entities)
 			{
-				foreach (var downloadGroupEntity in downloadGroup.Entities)
-				{
-					downloadGroupEntity.DownloadGroup = downloadGroup;
-					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
-				}
+				downloadGroupEntity.DownloadGroup = downloadGroup;
+				AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
 			}
 
 			if (SettingHelper.AutoDownload) Download();
@@ -118,19 +107,13 @@ namespace TenekDownloader.viewModel
 		public void SaveDownloadPath()
 		{
 			var dialog = new FolderBrowserDialog();
-			if (dialog.ShowDialog() == DialogResult.OK)
-			{
-				SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
-			}
+			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
 		}
 
 		private void SaveSevenZipLibraryPath()
 		{
 			var dialog = new OpenFileDialog {Filter = "7-z library|7z.dll"};
-			if (dialog.ShowDialog() == DialogResult.OK)
-			{
-				SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
-			}
+			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
 		}
 
 		public void AddLinks()
@@ -144,10 +127,8 @@ namespace TenekDownloader.viewModel
 					ManyArchives = LinksHelper.HasManyArchives
 				};
 				Groups.Add(group);
-				foreach (var downloadEntity in @group.Entities)
-				{
+				foreach (var downloadEntity in group.Entities)
 					AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
-				}
 			}
 			else
 			{
@@ -155,10 +136,8 @@ namespace TenekDownloader.viewModel
 				{
 					var group = new DownloadGroup(new List<string> {link}, string.Empty, LinksHelper.IsCompressed);
 					Groups.Add(group);
-					foreach (var downloadEntity in @group.Entities)
-					{
+					foreach (var downloadEntity in group.Entities)
 						AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
-					}
 				}
 			}
 
@@ -181,12 +160,8 @@ namespace TenekDownloader.viewModel
 			{
 				LinksHelper.Links = string.Empty;
 				foreach (var packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files)
-				{
-					if (packageFile.URL.Trim() != String.Empty)
-					{
+					if (packageFile.URL.Trim() != string.Empty)
 						links.Add(packageFile.URL);
-					}
-				}
 
 				LinksHelper.Links = string.Join(Environment.NewLine, links);
 			}
@@ -198,21 +173,14 @@ namespace TenekDownloader.viewModel
 
 		public void UncheckAll()
 		{
-			foreach (var entity in Groups)
-			{
-				entity.IsSerialized = false;
-			}
+			foreach (var entity in Groups) entity.IsSerialized = false;
 		}
 
 		public void ClearList()
 		{
 			foreach (var entity in Groups.ToList())
-			{
 				if (!entity.IsSerialized)
-				{
 					Groups.Remove(entity);
-				}
-			}
 
 			RaisePropertyChanged(nameof(Entities));
 
@@ -221,7 +189,7 @@ namespace TenekDownloader.viewModel
 
 		public void Exit()
 		{
-			System.Windows.Application.Current.Shutdown();
+			Application.Current.Shutdown();
 		}
 	}
 }
