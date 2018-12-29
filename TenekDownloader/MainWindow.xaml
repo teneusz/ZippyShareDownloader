@@ -7,7 +7,16 @@
         xmlns:viewModel="clr-namespace:TenekDownloader.viewModel"
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
-        Title="Tenek downloader" Height="450" Width="672.8">
+
+        Title="Tenek downloader" Height="450" Width="672.8"
+         
+		  BorderThickness="0" 
+		  GlowBrush="DodgerBlue"
+		  ResizeMode="CanResizeWithGrip"
+
+		  WindowTransitionsEnabled="False"
+		  WindowStartupLocation="CenterScreen"
+         >
 	<Window.DataContext>
 		<viewModel:ViewModel />
 	</Window.DataContext>

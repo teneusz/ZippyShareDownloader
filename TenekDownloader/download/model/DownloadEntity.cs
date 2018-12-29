@@ -13,6 +13,7 @@ namespace TenekDownloader.download.model
 		public const string Http = "http://";
 		public const string Https = "https://";
 		private int _downloadPercent;
+		[JsonIgnore]
 		private IFileDownloader _fileDownloader;
 		private LinkInfo _linkInfo;
 		private DownloadStatus _status = DownloadStatus.Waiting;
@@ -53,6 +54,7 @@ namespace TenekDownloader.download.model
 			set => SetProperty(ref _downloadPercent, value);
 		}
 
+		[JsonIgnore]
 		public IFileDownloader FileDownloaderObj
 		{
 			get => _fileDownloader;

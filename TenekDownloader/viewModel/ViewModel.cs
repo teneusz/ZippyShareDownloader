@@ -154,17 +154,12 @@ namespace TenekDownloader.viewModel
 
 		private void ReadDlc()
 		{
-			var open = new OpenFileDialog {Filter = "DLC files (*.dlc)|*.dlc"};
-			var links = new List<string>();
-			if (open.ShowDialog() == DialogResult.OK)
-			{
-				LinksHelper.Links = string.Empty;
-				foreach (var packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files)
-					if (packageFile.URL.Trim() != string.Empty)
-						links.Add(packageFile.URL);
+			var open = new OpenFileDialog {Filter = @"DLC files (*.dlc)|*.dlc"};
+			if (open.ShowDialog() != DialogResult.OK) return;
+			LinksHelper.Links = string.Empty;
+			var links = (from packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files where packageFile.URL.Trim() != string.Empty select packageFile.URL).ToList();
 
-				LinksHelper.Links = string.Join(Environment.NewLine, links);
-			}
+			LinksHelper.Links = string.Join(Environment.NewLine, links);
 		}
 
 		public void About()
@@ -190,6 +185,11 @@ namespace TenekDownloader.viewModel
 		public void Exit()
 		{
 			Application.Current.Shutdown();
+		}
+
+		~ViewModel()
+		{
+			SaveGroupsToFile();
 		}
 	}
 }
