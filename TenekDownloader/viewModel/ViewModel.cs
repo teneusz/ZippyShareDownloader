@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -36,7 +37,6 @@ namespace TenekDownloader.viewModel
 			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
 			TestCommand = new DelegateCommand(ShowNotification);
 			DlcCommand = new DelegateCommand(ReadDlc);
-
 			LoadGroupsFromFile();
 		}
 
