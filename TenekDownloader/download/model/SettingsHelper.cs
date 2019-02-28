@@ -46,13 +46,25 @@ namespace TenekDownloader.download.model
 
 		public ColumnVisible ColumnVisible
 		{
-			get => Settings.ColumnVisiblity ?? new ColumnVisible();
+			get => Settings.ColumnVisibility ?? new ColumnVisible();
 			set
 			{
-				Settings.ColumnVisiblity = value;
+				Settings.ColumnVisibility = value;
 				Settings.Save();
-				var settingsColumnVisiblity = Settings.ColumnVisiblity;
-				SetProperty(ref settingsColumnVisiblity, value);
+				var settingsColumnVisibility = Settings.ColumnVisibility;
+				SetProperty(ref settingsColumnVisibility, value);
+			}
+		}
+
+		public int MaxDownloadingCount
+		{
+			get => Settings.MaxDownloadingCount;
+			set
+			{
+				Settings.MaxDownloadingCount = value;
+				Settings.Save();
+				var maxDownloadingCount = Settings.MaxDownloadingCount;
+				SetProperty(ref maxDownloadingCount, value);
 			}
 		}
 	}

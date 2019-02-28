@@ -10,11 +10,10 @@ namespace TenekDownloader.download.model
 {
 	public class DownloadEntity : BindableBase
 	{
-		public const string Http = "http://";
-		public const string Https = "https://";
+		public const string HTTP = "http://";
+		public const string HTTPS = "https://";
 		private int _downloadPercent;
-		[JsonIgnore]
-		private IFileDownloader _fileDownloader;
+		[JsonIgnore] private IFileDownloader _fileDownloader;
 		private LinkInfo _linkInfo;
 		private DownloadStatus _status = DownloadStatus.Waiting;
 
@@ -64,22 +63,24 @@ namespace TenekDownloader.download.model
 				if (_fileDownloader != null)
 				{
 					_fileDownloader.DownloadProgressChanged += DownloadProgressChanged;
-					_fileDownloader.DownloadFileCompleted += (sender, args) =>
-					{
-						switch (args.State)
-						{
-							case CompletedState.Succeeded:
-								Status = DownloadStatus.Completed;
-								break;
-							case CompletedState.Canceled:
-								Status = DownloadStatus.Canceled;
-								break;
-							case CompletedState.Failed:
-								Status = DownloadStatus.Error;
-								break;
-						}
-					};
+					_fileDownloader.DownloadFileCompleted += DownloadFileCompleted;
 				}
+			}
+		}
+
+		private void DownloadFileCompleted(object sender, DownloadFileCompletedArgs args)
+		{
+			switch (args.State)
+			{
+				case CompletedState.Succeeded:
+					Status = DownloadStatus.Completed;
+					break;
+				case CompletedState.Canceled:
+					Status = DownloadStatus.Canceled;
+					break;
+				case CompletedState.Failed:
+					Status = DownloadStatus.Error;
+					break;
 			}
 		}
 
@@ -110,20 +111,48 @@ namespace TenekDownloader.download.model
 
 		private static string GetService(string link)
 		{
-			var result = string.Empty;
+
 			if (link == null) throw new ArgumentNullException();
 
-			if (link.ToLower().Contains(Http))
-				result = link.Replace(Http, string.Empty);
-			else if (link.ToLower().Contains(Https)) result = link.Replace(Https, string.Empty);
+				var result = string.Empty;
 
-			var tab = result.Remove(result.IndexOf('/')).Split('.');
-			result = string.Empty;
+			if (HasHttp(link))
+				result = RemoveHttp(link);
+			else if (HasHttps(link))
+				result = RemoveHttps(link);
+
+			return ExtractServiceName(result);
+		}
+
+		private static string ExtractServiceName(string link)
+		{
+			var tab = link.Remove(link.IndexOf('/')).Split('.');
+			link = string.Empty;
 			foreach (var s in tab)
-				if (s.Length > result.Length)
-					result = s;
+				if (s.Length > link.Length)
+					link = s;
 
-			return result;
+			return link;
+		}
+
+		private static string RemoveHttps(string link)
+		{
+			return link.Replace(HTTPS, string.Empty);
+		}
+
+		private static string RemoveHttp(string link)
+		{
+			return link.Replace(HTTP, string.Empty);
+		}
+
+		private static bool HasHttps(string link)
+		{
+			return link.ToLower().Contains(HTTPS);
+		}
+
+		private static bool HasHttp(string link)
+		{
+			return link.ToLower().Contains(HTTP);
 		}
 	}
 }

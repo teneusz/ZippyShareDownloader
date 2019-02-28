@@ -11,14 +11,14 @@ namespace TenekDownloader.util
 		private static readonly ILog Log = LogManager.GetLogger(typeof(ArchiveUtil));
 
 		public static void UnpackArchive(string inFile, string outFile,
-			EventHandler<ProgressEventArgs> extractingEventHandler)
+			EventHandler<ProgressEventArgs> extractingEventHandler, string password = null)
 		{
 			var unzipTask = new Task(() =>
 			{
 				try
 				{
 					SevenZipBase.SetLibraryPath(Settings.Default.SevenZipDll);
-					using (var tmp = new SevenZipExtractor(inFile))
+					using (var tmp = password == null ? new SevenZipExtractor(inFile) : new SevenZipExtractor(inFile, password))
 					{
 						foreach (var data in tmp.ArchiveFileData)
 						{

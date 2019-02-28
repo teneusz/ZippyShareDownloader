@@ -13,7 +13,8 @@ namespace TenekDownloader.link.imp
 
 		private string _htmlCode;
 		private string _prefix;
-		public LinkInfo LinkInfo { get; private set; }
+        private static readonly string JavascriptPattern = "(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))";
+        public LinkInfo LinkInfo { get; private set; }
 
 		public void ProcessLink(string link)
 		{
@@ -24,7 +25,7 @@ namespace TenekDownloader.link.imp
 				GetDirectLinkFromLink();
 				ProcessFileName();
 				ProcessFileSize();
-				CheckFileExistnce();
+				CheckFileExistence();
 			}
 			catch (WebException ex)
 			{
@@ -50,7 +51,7 @@ namespace TenekDownloader.link.imp
 				.Replace("document.getElementById('fimage')", "dummy");
 
 			var jsScript = string.Format(JS_FORMAT, js);
-			var link = "";
+            var link = string.Empty;
 			using (var engine = new ScriptEngine("jscript"))
 			{
 				var parsed = engine.Parse(jsScript);
@@ -62,20 +63,19 @@ namespace TenekDownloader.link.imp
 
 		private string GetJavaScriptSection()
 		{
-			var script = Regex.Matches(_htmlCode,
-				"(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))");
+            var script = Regex.Matches(_htmlCode,
+				JavascriptPattern);
 			foreach (Match temp in script)
 				if (temp.Value.Contains("dlbutton"))
 					return temp.Value;
 
-			return "";
+			return string.Empty;
 		}
 
 		private void ProcessFileName()
 		{
 			var returnLine = Regex.Match(LinkInfo.DownloadLink, "[^\\/]{1,}$");
-			var result = returnLine.Success ? returnLine.Value : null;
-			LinkInfo.FileName = result;
+			LinkInfo.FileName = returnLine.Success ? returnLine.Value : null;
 		}
 
 		private void ProcessFileSize()
@@ -83,9 +83,9 @@ namespace TenekDownloader.link.imp
 			LinkInfo.FileSize = null;
 		}
 
-		private void CheckFileExistnce()
+		private void CheckFileExistence()
 		{
-			LinkInfo.IsFileExists = !_htmlCode.Contains("File does not exist on this server");
+			LinkInfo.IsFileExists = !_htmlCode.Contains("File does not exist on this server") && !_htmlCode.Contains("File has expired and does not exist anymore on this server");
 		}
 	}
 }

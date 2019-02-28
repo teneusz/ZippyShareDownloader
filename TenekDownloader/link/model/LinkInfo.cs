@@ -10,7 +10,7 @@ namespace TenekDownloader.link.model
 		private string _fileName;
 		private double? _fileSize;
 		private bool _isFileExists;
-		private string _orignalLink;
+		private string _originalLink;
 		private string _serviceName;
 
 		public bool BackToQueue
@@ -21,8 +21,8 @@ namespace TenekDownloader.link.model
 
 		public string OrignalLink
 		{
-			get => _orignalLink;
-			set => SetProperty(ref _orignalLink, value);
+			get => _originalLink;
+			set => SetProperty(ref _originalLink, value);
 		}
 
 		public string DownloadLink

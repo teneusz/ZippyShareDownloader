@@ -11,6 +11,8 @@ using Prism.Commands;
 using Prism.Mvvm;
 using TenekDownloader.download.model;
 using TenekDownloader.download.service;
+using TenekDownloader.download.service.impl;
+using TenekDownloader.Properties;
 using TenekDownloader.util;
 using TenekDownloader.util.dlc;
 using Application = System.Windows.Application;
@@ -20,7 +22,7 @@ namespace TenekDownloader.viewModel
 	public class ViewModel : BindableBase
 	{
 		private const string ConfigJson = "config.json";
-		public static AbstractDownloadService DownloadService = new DownloadServiceSecondVersion();
+		public static AbstractDownloadService DownloadService = new FileDownloaderDownloadService();
 		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
 		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
 		private LinksHelper _linksHelper = new LinksHelper();
@@ -59,8 +61,9 @@ namespace TenekDownloader.viewModel
 		{
 			get
 			{
-				//TODO: No other idea :D
+				//TODO: I have no other idea :D
 				_entities.Clear();
+                
 				foreach (var downloadGroup in Groups) _entities.AddRange(downloadGroup.Entities);
 
 				return _entities;
@@ -84,10 +87,12 @@ namespace TenekDownloader.viewModel
 			if (!File.Exists(ConfigJson)) return;
 			Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>(ConfigJson);
 			foreach (var downloadGroup in Groups)
-			foreach (var downloadGroupEntity in downloadGroup.Entities)
 			{
-				downloadGroupEntity.DownloadGroup = downloadGroup;
-				AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
+				foreach (var downloadGroupEntity in downloadGroup.Entities)
+				{
+					downloadGroupEntity.DownloadGroup = downloadGroup;
+					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
+				}
 			}
 
 			if (SettingHelper.AutoDownload) Download();
@@ -112,7 +117,7 @@ namespace TenekDownloader.viewModel
 
 		private void SaveSevenZipLibraryPath()
 		{
-			var dialog = new OpenFileDialog {Filter = "7-z library|7z.dll"};
+			var dialog = new OpenFileDialog {Filter = Resources.SevenZipFileFilter};
 			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
 		}
 
@@ -124,7 +129,8 @@ namespace TenekDownloader.viewModel
 				var group = new DownloadGroup(new List<string>(links), LinksHelper.Name,
 					LinksHelper.IsCompressed)
 				{
-					ManyArchives = LinksHelper.HasManyArchives
+					ManyArchives = LinksHelper.HasManyArchives,
+                    ArchivePassword = LinksHelper.ArchivePassword
 				};
 				Groups.Add(group);
 				foreach (var downloadEntity in group.Entities)
@@ -134,11 +140,14 @@ namespace TenekDownloader.viewModel
 			{
 				foreach (var link in links)
 				{
-					var group = new DownloadGroup(new List<string> {link}, string.Empty, LinksHelper.IsCompressed);
+					var group = new DownloadGroup(new List<string> {link}, string.Empty, LinksHelper.IsCompressed)
+                    {
+                        ArchivePassword = LinksHelper.ArchivePassword
+                    };
 					Groups.Add(group);
-					foreach (var downloadEntity in group.Entities)
-						AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
-				}
+                    foreach (var downloadEntity in group.Entities)
+                        AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
+                }
 			}
 
 			RaisePropertyChanged(nameof(Entities));
@@ -154,11 +163,11 @@ namespace TenekDownloader.viewModel
 
 		private void ReadDlc()
 		{
-			var open = new OpenFileDialog {Filter = @"DLC files (*.dlc)|*.dlc"};
+			var open = new OpenFileDialog {Filter = Resources.DlcFileFilter};
 			if (open.ShowDialog() != DialogResult.OK) return;
 			LinksHelper.Links = string.Empty;
-			var links = (from packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files where packageFile.URL.Trim() != string.Empty select packageFile.URL).ToList();
-
+			var links = (from packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files where !string.IsNullOrEmpty(packageFile.URL.Trim()) select packageFile.URL).ToList();
+           
 			LinksHelper.Links = string.Join(Environment.NewLine, links);
 		}
 
@@ -180,6 +189,7 @@ namespace TenekDownloader.viewModel
 			RaisePropertyChanged(nameof(Entities));
 
 			SaveGroupsToFile();
+            GC.Collect();
 		}
 
 		public void Exit()

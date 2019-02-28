@@ -73,12 +73,24 @@ namespace TenekDownloader.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::TenekDownloader.view.model.ColumnVisible ColumnVisiblity {
+        public global::TenekDownloader.view.model.ColumnVisible ColumnVisibility {
             get {
                 return ((global::TenekDownloader.view.model.ColumnVisible)(this["ColumnVisiblity"]));
             }
             set {
                 this["ColumnVisiblity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int MaxDownloadingCount {
+            get {
+                return ((int)(this["MaxDownloadingCount"]));
+            }
+            set {
+                this["MaxDownloadingCount"] = value;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using TenekDownloader.download.model;
@@ -6,7 +7,7 @@ using TenekDownloader.link;
 
 namespace TenekDownloader.download.service
 {
-	public class DownloadService : AbstractDownloadService
+	public class WebClientDownloadService : AbstractDownloadService
 	{
 		public override void Download()
 		{
@@ -36,31 +37,35 @@ namespace TenekDownloader.download.service
 				var downloadLocation = entity.LinkInfo.DownloadLocation =
 					ProcessDownloadLocation(entity);
 
-				webClient.DownloadFileCompleted += (sender, e) =>
-				{
-					if (e.Error != null)
-					{
-						entity.Status = DownloadStatus.Error;
-						entity.DownloadPercent = 0;
-					}
-					else if (e.Cancelled)
-					{
-						entity.Status = DownloadStatus.Canceled;
-						entity.DownloadPercent = 0;
-					}
-					else
-					{
-						CheckIfFileIsDownloadedSuccesful(downloadLocation, entity);
-						ExtractArchive(entity);
-					}
-
-					AfterDownload();
-				};
-
+				webClient.DownloadFileCompleted += DownloadFileCompleted(entity, downloadLocation);
 				webClient.DownloadProgressChanged += (sender, e) => entity.DownloadPercent = e.ProgressPercentage;
 				webClient.DownloadFileAsync(new Uri(entity.LinkInfo.DownloadLink), downloadLocation);
 				webClient.Proxy = null;
 			}
+		}
+
+		private AsyncCompletedEventHandler DownloadFileCompleted(DownloadEntity entity, string downloadLocation)
+		{
+			return (sender, e) =>
+			{
+				if (e.Error != null)
+				{
+					entity.Status = DownloadStatus.Error;
+					entity.DownloadPercent = 0;
+				}
+				else if (e.Cancelled)
+				{
+					entity.Status = DownloadStatus.Canceled;
+					entity.DownloadPercent = 0;
+				}
+				else
+				{
+					CheckIfFileIsDownloadedSuccessful(downloadLocation, entity);
+					ExtractArchive(entity);
+				}
+
+				AfterDownload();
+			};
 		}
 	}
 }

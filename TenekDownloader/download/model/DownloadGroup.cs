@@ -12,12 +12,11 @@ namespace TenekDownloader.download.model
 		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
 		private int _extractProgress;
 		private bool _isAutoExtracting;
-		private bool _isMoreThanOneArchive;
 		private bool _isSerialized = true;
 		private List<string> _links;
 		private string _name;
-		private bool? _unpack;
 		public bool ManyArchives;
+        private string _archivePassword;
 
 		public DownloadGroup()
 		{
@@ -32,9 +31,9 @@ namespace TenekDownloader.download.model
 			_downloadLocation = Settings.Default.DownloadLocation;
 			foreach (var link in links)
 			{
-				var unescapeLink = link.Replace("\r", "");
-				if (string.IsNullOrEmpty(unescapeLink)) continue;
-				Entities.Add(new DownloadEntity(unescapeLink) {DownloadGroup = this});
+				var unescapedLink = link.Replace("\r", "");
+				if (string.IsNullOrEmpty(unescapedLink)) continue;
+				Entities.Add(new DownloadEntity(unescapedLink) {DownloadGroup = this});
 			}
 		}
 
@@ -68,12 +67,6 @@ namespace TenekDownloader.download.model
 			set => SetProperty(ref _isAutoExtracting, value);
 		}
 
-		public bool IsMoreThanOneArchive
-		{
-			get => _isMoreThanOneArchive;
-			set => SetProperty(ref _isMoreThanOneArchive, value);
-		}
-
 		public string Name
 		{
 			get => _name;
@@ -85,5 +78,11 @@ namespace TenekDownloader.download.model
 			get => Entities[index];
 			set => Entities[index] = value;
 		}
-	}
+
+        public string ArchivePassword
+        {
+            get => _archivePassword;
+            set => SetProperty(ref _archivePassword, value);
+        }
+    }
 }

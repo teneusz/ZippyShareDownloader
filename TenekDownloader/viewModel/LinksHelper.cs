@@ -9,6 +9,7 @@ namespace TenekDownloader.viewModel
 		private bool _isInGroup = true;
 		private string _links = "";
 		private string _name;
+        private string _archivePassword;
 
 		public string Links
 		{
@@ -39,5 +40,11 @@ namespace TenekDownloader.viewModel
 			get => _isInGroup;
 			set => SetProperty(ref _isInGroup, value);
 		}
-	}
+
+        public string ArchivePassword
+        {
+            get => _archivePassword;
+            set => SetProperty(ref _archivePassword, value);
+        }
+    }
 }

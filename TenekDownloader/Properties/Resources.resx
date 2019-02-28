@@ -120,4 +120,10 @@
   <data name="AppTitle" xml:space="preserve">
     <value>AppTitle</value>
   </data>
+  <data name="SevenZipFileFilter" xml:space="preserve">
+    <value>7-z library|7z.dll</value>
+  </data>
+  <data name="DlcFileFilter" xml:space="preserve">
+    <value>DLC files (*.dlc)|*.dlc</value>
+  </data>
 </root>

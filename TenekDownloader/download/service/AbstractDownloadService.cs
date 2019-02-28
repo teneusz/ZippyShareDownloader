@@ -1,47 +1,47 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using TenekDownloader.download.model;
 using TenekDownloader.util;
 
 namespace TenekDownloader.download.service
 {
-	public abstract class AbstractDownloadService
+    public abstract class AbstractDownloadService
 	{
 		public static Queue<DownloadEntity> DownloadQueue = new Queue<DownloadEntity>();
+		public static readonly string DoubleBackslash = "\\";
 		public static bool Downloading { get; set; }
-		public abstract void Download();
+
+		protected static SettingsHelper SettingsHelper = new SettingsHelper();
+		protected static HashSet<DownloadEntity> AlreadyDownloading = new HashSet<DownloadEntity>();
 
 		protected void ExtractArchive(DownloadEntity entity)
-		{
+        {
 			if (!entity.DownloadGroup.IsAutoExtracting) return;
-			var allDownloaded = true;
-			foreach (var downloadGroupEntity in entity.DownloadGroup.Entities)
-				allDownloaded = allDownloaded && downloadGroupEntity.Status == DownloadStatus.Completed;
+            var allDownloaded = entity.DownloadGroup.Entities.Any(e => e.Status != DownloadStatus.Completed);
 
-			if (!allDownloaded) return;
-			if (!entity.DownloadGroup.IsMoreThanOneArchive)
-			{
-				var file = entity.DownloadGroup.Entities.OrderBy(e => e.LinkInfo.FileName).First().LinkInfo
-					.DownloadLocation;
-				ArchiveUtil.UnpackArchive(file, Directory.GetParent(file).FullName,
-					(sender, args) => entity.DownloadGroup.ExtractProgress = args.PercentDone);
-			}
+            if (!allDownloaded) return;
+			var file = entity.DownloadGroup.Entities.OrderBy(e => e.LinkInfo.FileName).First().LinkInfo
+				.DownloadLocation;
+			ArchiveUtil.UnpackArchive(file, Directory.GetParent(file).FullName,
+				(sender, args) => entity.DownloadGroup.ExtractProgress = args.PercentDone, entity.DownloadGroup.ArchivePassword);
 		}
 
 		protected string ProcessDownloadLocation(DownloadEntity entity)
 		{
 			var downloadLocation = entity.DownloadGroup.DownloadLocation;
-			if (!string.IsNullOrEmpty(entity.GroupName)) downloadLocation += "\\" + entity.GroupName;
+			if (!string.IsNullOrEmpty(entity.GroupName)) downloadLocation += DoubleBackslash + entity.GroupName;
 
 			if (!Directory.Exists(downloadLocation)) Directory.CreateDirectory(downloadLocation);
-			downloadLocation += "\\" + entity.LinkInfo.FileName;
+			downloadLocation += DoubleBackslash + entity.LinkInfo.FileName;
 
 			return downloadLocation;
 		}
 
 
-		protected virtual void CheckIfFileIsDownloadedSuccesful(string downloadLocation, DownloadEntity entity)
+		protected virtual void CheckIfFileIsDownloadedSuccessful(string downloadLocation, DownloadEntity entity)
 		{
 			if (FileUtil.CheckFileType(downloadLocation))
 			{
@@ -56,9 +56,23 @@ namespace TenekDownloader.download.service
 			}
 		}
 
-		protected virtual void AfterDownload()
+        public virtual void Download()
+        {
+            if (AlreadyDownloading.Count < SettingsHelper.MaxDownloadingCount)
+            {
+                new Task(Download).Start();
+            }
+        }
+
+        protected virtual void AfterDownload()
 		{
 			Download();
 		}
-	}
+
+
+        protected static bool CanDownload()
+        {
+            return DownloadQueue.Any() && Downloading && SettingsHelper.MaxDownloadingCount >= AlreadyDownloading.Count;
+        }
+    }
 }
