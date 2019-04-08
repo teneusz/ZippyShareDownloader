@@ -47,6 +47,9 @@
                         <DataGridTextColumn Header="File Name"
                                             Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
                                             Binding="{Binding LinkInfo.FileName}" />
+                        <DataGridTextColumn Header="File Name"
+                                            Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
+                                            Binding="{Binding ByteReceived}" />
                         <DataGridTextColumn Header="Group Name"
                                             Visibility="{Binding SettingHelper.ColumnVisible.GroupName}"
                                             Binding="{Binding GroupName}" />

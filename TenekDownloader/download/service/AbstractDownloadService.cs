@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using TenekDownloader.download.model;
 using TenekDownloader.util;
@@ -56,13 +57,7 @@ namespace TenekDownloader.download.service
 			}
 		}
 
-        public virtual void Download()
-        {
-            if (AlreadyDownloading.Count < SettingsHelper.MaxDownloadingCount)
-            {
-                new Task(Download).Start();
-            }
-        }
+        public abstract void Download(object state = null);
 
         protected virtual void AfterDownload()
 		{
@@ -73,6 +68,12 @@ namespace TenekDownloader.download.service
         protected static bool CanDownload()
         {
             return DownloadQueue.Any() && Downloading && SettingsHelper.MaxDownloadingCount >= AlreadyDownloading.Count;
+        }
+
+
+        protected static bool IsFileNotExists(DownloadEntity entity)
+        {
+            return !entity.LinkInfo.IsFileExists;
         }
     }
 }

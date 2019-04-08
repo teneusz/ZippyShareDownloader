@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -20,16 +21,21 @@ using Application = System.Windows.Application;
 namespace TenekDownloader.viewModel
 {
 	public class ViewModel : BindableBase
-	{
-		private const string ConfigJson = "config.json";
-		public static AbstractDownloadService DownloadService = new FileDownloaderDownloadService();
+    {
+        private static readonly log4net.ILog log
+            = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        private const string ConfigJson = "config.json";
+		private readonly AbstractDownloadService _downloadService = new FileDownloaderDownloadService();
 		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
 		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
 		private LinksHelper _linksHelper = new LinksHelper();
 
 		public ViewModel()
 		{
-			ExitCommand = new DelegateCommand(Exit);
+            log.Debug("Create ViewModel");
+            log.Debug("Starting setting up delegation commands");
+
+            ExitCommand = new DelegateCommand(Exit);
 			AddLinksCommand = new DelegateCommand(AddLinks);
 			AboutCommand = new DelegateCommand(About);
 			DownloadCommand = new DelegateCommand(Download);
@@ -39,8 +45,14 @@ namespace TenekDownloader.viewModel
 			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
 			TestCommand = new DelegateCommand(ShowNotification);
 			DlcCommand = new DelegateCommand(ReadDlc);
+            log.Debug("Delegation commands created");
+            log.Debug("Start loading entries from file");
 			LoadGroupsFromFile();
-		}
+            log.Debug("Entries loaded");
+
+            ThreadPool.SetMaxThreads(SettingHelper.MaxDownloadingCount, SettingHelper.MaxDownloadingCount);
+            log.Debug($"ThreadPool->GetMaxThreads = {SettingHelper.MaxDownloadingCount}");
+        }
 
 		public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
 
@@ -91,8 +103,9 @@ namespace TenekDownloader.viewModel
 				foreach (var downloadGroupEntity in downloadGroup.Entities)
 				{
 					downloadGroupEntity.DownloadGroup = downloadGroup;
-					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
-				}
+//					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
+                    ThreadPool.QueueUserWorkItem(new WaitCallback(_downloadService.Download), downloadGroupEntity);
+                }
 			}
 
 			if (SettingHelper.AutoDownload) Download();
@@ -103,13 +116,13 @@ namespace TenekDownloader.viewModel
 			SerializerUtils.WriteToJsonFile(ConfigJson, Groups.ToList().FindAll(e => e.IsSerialized));
 		}
 
-		public void Download()
-		{
-			AbstractDownloadService.Downloading = true;
-			new Task(DownloadService.Download).Start();
-		}
+        public void Download()
+        {
+            AbstractDownloadService.Downloading = true;
+            ThreadPool.QueueUserWorkItem(new WaitCallback(_downloadService.Download));
+        }
 
-		public void SaveDownloadPath()
+        public void SaveDownloadPath()
 		{
 			var dialog = new FolderBrowserDialog();
 			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
@@ -134,8 +147,8 @@ namespace TenekDownloader.viewModel
 				};
 				Groups.Add(group);
 				foreach (var downloadEntity in group.Entities)
-					AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
-			}
+                    ThreadPool.QueueUserWorkItem(_downloadService.Download, downloadEntity);
+            }
 			else
 			{
 				foreach (var link in links)
@@ -146,7 +159,7 @@ namespace TenekDownloader.viewModel
                     };
 					Groups.Add(group);
                     foreach (var downloadEntity in group.Entities)
-                        AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
+                        ThreadPool.QueueUserWorkItem(_downloadService.Download, downloadEntity);
                 }
 			}
 

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.Windows;
 using MahApps.Metro.Controls;
 
@@ -9,9 +10,18 @@ namespace TenekDownloader
 	/// </summary>
 	public partial class MainWindow
 	{
-		public MainWindow()
+        private static readonly log4net.ILog log
+            = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        public MainWindow()
 		{
-			InitializeComponent();
-		}
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                log.Debug(ex.Message, ex);
+            }
+        }
 	}
 }

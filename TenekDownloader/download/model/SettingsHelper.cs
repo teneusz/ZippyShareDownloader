@@ -1,4 +1,5 @@
-﻿using Prism.Mvvm;
+﻿using System.Threading;
+using Prism.Mvvm;
 using TenekDownloader.Properties;
 using TenekDownloader.view.model;
 
@@ -65,7 +66,9 @@ namespace TenekDownloader.download.model
 				Settings.Save();
 				var maxDownloadingCount = Settings.MaxDownloadingCount;
 				SetProperty(ref maxDownloadingCount, value);
-			}
-		}
+                ThreadPool.SetMaxThreads(MaxDownloadingCount, MaxDownloadingCount);
+
+            }
+        }
 	}
 }
