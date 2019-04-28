@@ -20,5 +20,14 @@
     <Setting Name="MaxDownloadingCount" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
+    <Setting Name="MemoryCacheSize" Type="System.Int32" Scope="User">
+     <Value Profile="(Default)">1024</Value>
+    </Setting>
+    <Setting Name="EnableSpeedLimit" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="SpeedLimit" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1024</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

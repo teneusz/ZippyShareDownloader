@@ -17,6 +17,8 @@ namespace TenekDownloader.download.model
 		private string _name;
 		public bool ManyArchives;
         private string _archivePassword;
+        
+        private string _UUID = System.Guid.NewGuid().ToString();
 
 		public DownloadGroup()
 		{
@@ -33,7 +35,7 @@ namespace TenekDownloader.download.model
 			{
 				var unescapedLink = link.Replace("\r", "");
 				if (string.IsNullOrEmpty(unescapedLink)) continue;
-				Entities.Add(new DownloadEntity(unescapedLink) {DownloadGroup = this});
+				Entities.Add(new DownloadEntity(unescapedLink) {DownloadGroup = this, Status = DownloadStatus.Preparing});
 			}
 		}
 
@@ -84,5 +86,11 @@ namespace TenekDownloader.download.model
             get => _archivePassword;
             set => SetProperty(ref _archivePassword, value);
         }
-    }
+
+        public string Uuid
+        {
+	        get => _UUID;
+	        set => _UUID = value;
+        }
+	}
 }

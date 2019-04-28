@@ -18,11 +18,11 @@ namespace TenekDownloader.util
 				try
 				{
 					SevenZipBase.SetLibraryPath(Settings.Default.SevenZipDll);
-					using (var tmp = string.IsNullOrEmpty(password) ? new SevenZipExtractor(inFile) : new SevenZipExtractor(inFile, password))
+					using (var tmp = password == null ? new SevenZipExtractor(inFile) : new SevenZipExtractor(inFile, password))
 					{
 						foreach (var data in tmp.ArchiveFileData)
 						{
-                            tmp.Extracting += extractingEventHandler;
+							tmp.Extracting += extractingEventHandler;
 							tmp.ExtractFiles(outFile, data.Index);
 						}
 					}

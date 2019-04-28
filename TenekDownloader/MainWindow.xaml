@@ -47,22 +47,15 @@
                         <DataGridTextColumn Header="File Name"
                                             Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
                                             Binding="{Binding LinkInfo.FileName}" />
-                        <DataGridTextColumn Header="File Name"
-                                            Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
-                                            Binding="{Binding ByteReceived}" />
                         <DataGridTextColumn Header="Group Name"
                                             Visibility="{Binding SettingHelper.ColumnVisible.GroupName}"
                                             Binding="{Binding GroupName}" />
                         <DataGridTextColumn Header="Service Name"
                                             Visibility="Hidden"
                                             Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True" />
-                        <DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}"
-                                            IsReadOnly="True" />
-                        <DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}"
-                                            IsReadOnly="True" />
-                        <DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}"
-                                            IsReadOnly="True" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Download speed" Binding="{Binding LinkInfo.DownloadSpeed}" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Time left" Binding="{Binding LinkInfo.TimeLeft}" IsReadOnly="True" />
                         <DataGridTemplateColumn Header="Progress">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
@@ -79,6 +72,14 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Service Link" Binding="{Binding LinkInfo.OrignalLink}"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="Download Link" Binding="{Binding LinkInfo.DownloadLink}"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="File location" Binding="{Binding LinkInfo.DownloadLocation}"
+                                            IsReadOnly="True" />
+                        <DataGridTextColumn Header="Downloaded" Binding="{Binding LinkInfo.DownloadedSize}"
+                                            IsReadOnly="True" />
                         <DataGridTemplateColumn Header="Cancel" Visibility="Hidden">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>

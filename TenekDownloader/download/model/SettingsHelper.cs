@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using TenekDownloader.Properties;
 using TenekDownloader.view.model;
 
@@ -66,9 +65,41 @@ namespace TenekDownloader.download.model
 				Settings.Save();
 				var maxDownloadingCount = Settings.MaxDownloadingCount;
 				SetProperty(ref maxDownloadingCount, value);
-                ThreadPool.SetMaxThreads(MaxDownloadingCount, MaxDownloadingCount);
+			}
+		}
 
-            }
-        }
+		public bool EnableSpeedLimit { get => Settings.EnableSpeedLimit;
+			set
+			{
+				Settings.EnableSpeedLimit = value;
+				Settings.Save();
+				var enableSpeedLimit = Settings.EnableSpeedLimit;
+				SetProperty(ref enableSpeedLimit, value);
+			}
+		}
+
+		public int SpeedLimit
+		{
+			get => Settings.SpeedLimit;
+			set
+			{
+				Settings.SpeedLimit = value;
+				Settings.Save();
+				var speedLimit = Settings.SpeedLimit;
+				SetProperty(ref speedLimit, value);
+			}
+		}
+
+		public int MemoryCacheSize
+		{
+			get => Settings.MemoryCacheSize;
+			set
+			{
+				Settings.MemoryCacheSize = value;
+				Settings.Save();
+				var memoryCacheSize = Settings.MemoryCacheSize;
+				SetProperty(ref memoryCacheSize, value);
+			}
+		}
 	}
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using TenekDownloader.download.model;
 using TenekDownloader.util;
@@ -12,9 +11,10 @@ namespace TenekDownloader.download.service
     public abstract class AbstractDownloadService
 	{
 		public static Queue<DownloadEntity> DownloadQueue = new Queue<DownloadEntity>();
+		public static List<WebRequestClient> Downloads = new List<WebRequestClient>();
 		public static readonly string DoubleBackslash = "\\";
 		public static bool Downloading { get; set; }
-
+		
 		protected static SettingsHelper SettingsHelper = new SettingsHelper();
 		protected static HashSet<DownloadEntity> AlreadyDownloading = new HashSet<DownloadEntity>();
 
@@ -30,7 +30,7 @@ namespace TenekDownloader.download.service
 				(sender, args) => entity.DownloadGroup.ExtractProgress = args.PercentDone, entity.DownloadGroup.ArchivePassword);
 		}
 
-		protected string ProcessDownloadLocation(DownloadEntity entity)
+		public static string ProcessDownloadLocation(DownloadEntity entity)
 		{
 			var downloadLocation = entity.DownloadGroup.DownloadLocation;
 			if (!string.IsNullOrEmpty(entity.GroupName)) downloadLocation += DoubleBackslash + entity.GroupName;
@@ -57,7 +57,13 @@ namespace TenekDownloader.download.service
 			}
 		}
 
-        public abstract void Download(object state = null);
+        public virtual void Download()
+        {
+            if (AlreadyDownloading.Count < SettingsHelper.MaxDownloadingCount)
+            {
+                new Task(Download).Start();
+            }
+        }
 
         protected virtual void AfterDownload()
 		{
@@ -70,10 +76,13 @@ namespace TenekDownloader.download.service
             return DownloadQueue.Any() && Downloading && SettingsHelper.MaxDownloadingCount >= AlreadyDownloading.Count;
         }
 
-
-        protected static bool IsFileNotExists(DownloadEntity entity)
+        public static int ActiveDownloads
         {
-            return !entity.LinkInfo.IsFileExists;
+	        get
+	        {
+		        return Downloads.ToList()
+			        .FindAll(e => e.DownloadEntity.Status == DownloadStatus.Downloading || e.DownloadEntity.Status == DownloadStatus.Waiting).Count;
+	        }
         }
-    }
+	}
 }

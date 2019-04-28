@@ -9,6 +9,10 @@
 		NotDownloading,
 		Preparing,
 		Completed,
-		Canceled
-	}
+		Canceled,
+        Deleting,
+        Paused,
+        Queued,
+        Pausing
+    }
 }

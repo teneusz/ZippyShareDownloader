@@ -126,4 +126,7 @@
   <data name="DlcFileFilter" xml:space="preserve">
     <value>DLC files (*.dlc)|*.dlc</value>
   </data>
+  <data name="Error_I_double_dare_you" xml:space="preserve">
+    <value>Dare you. I double dare you Motherfucker</value>
+  </data>
 </root>

@@ -9,18 +9,13 @@ namespace TenekDownloader.download.service
 {
 	public class WebClientDownloadService : AbstractDownloadService
 	{
-        private static readonly log4net.ILog log
-            = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        public override void Download(object o = null)
+		public override void Download()
 		{
-			if (o == null) return;
+			if (!DownloadQueue.Any() || !Downloading) return;
 			using (var webClient = new WebClient())
 			{
-                log.Debug("Enter Download()");
-                var entity = o as DownloadEntity;
-                log.Debug("Entry: " + entity.ToString());
-                entity.Status = DownloadStatus.Preparing;
+				var entity = DownloadQueue.Dequeue();
+				entity.Status = DownloadStatus.Preparing;
 				var interpreter = ServicesEnum.ValueOf(entity.LinkInfo.ServiceName).CreateInstace();
 				interpreter.ProcessLink(entity.LinkInfo?.OrignalLink);
 				entity.LinkInfo = interpreter.LinkInfo;
@@ -43,17 +38,10 @@ namespace TenekDownloader.download.service
 					ProcessDownloadLocation(entity);
 
 				webClient.DownloadFileCompleted += DownloadFileCompleted(entity, downloadLocation);
-				webClient.DownloadProgressChanged += (sender, e) =>
-                {
-                    log.Debug(
-                        $"{{{entity.LinkInfo.FileName} ==> {e.BytesReceived}}}");
-                    entity.DownloadPercent = e.ProgressPercentage;
-                    entity.ByteReceived=e.BytesReceived;
-                };
-                webClient.Proxy = null;
-                log.Debug($"Start downloading {entity.LinkInfo.FileName}");
-                webClient.DownloadFile(new Uri(entity.LinkInfo.DownloadLink), downloadLocation);
-            }
+				webClient.DownloadProgressChanged += (sender, e) => entity.DownloadPercent = e.ProgressPercentage;
+				webClient.DownloadFileAsync(new Uri(entity.LinkInfo.DownloadLink), downloadLocation);
+				webClient.Proxy = null;
+			}
 		}
 
 		private AsyncCompletedEventHandler DownloadFileCompleted(DownloadEntity entity, string downloadLocation)

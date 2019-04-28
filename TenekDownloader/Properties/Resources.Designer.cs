@@ -19,7 +19,7 @@ namespace TenekDownloader.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -79,11 +79,29 @@ namespace TenekDownloader.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dare you. I double dare you Motherfucker.
+        /// </summary>
+        public static string Error_I_double_dare_you {
+            get {
+                return ResourceManager.GetString("Error_I_double_dare_you", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 7-z library|7z.dll.
         /// </summary>
         public static string SevenZipFileFilter {
             get {
                 return ResourceManager.GetString("SevenZipFileFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dare you motherfucker. I double dare you.
+        /// </summary>
+        public static string WebRequestClient_DownloadFile_Dare_you_motherfucker__I_double_dare_you {
+            get {
+                return ResourceManager.GetString("WebRequestClient_DownloadFile_Dare_you_motherfucker__I_double_dare_you", resourceCulture);
             }
         }
     }

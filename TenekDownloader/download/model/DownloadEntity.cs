@@ -16,14 +16,14 @@ namespace TenekDownloader.download.model
 		[JsonIgnore] private IFileDownloader _fileDownloader;
 		private LinkInfo _linkInfo;
 		private DownloadStatus _status = DownloadStatus.Waiting;
-        private long _byteReceived;
 
-        public DownloadEntity(string link) : this()
+		public DownloadEntity(string link) : this()
 		{
 			LinkInfo = new LinkInfo
 			{
 				OrignalLink = link,
-				ServiceName = GetService(link)
+				ServiceName = GetService(link),
+				DownloadEntity = this
 			};
 		}
 
@@ -94,14 +94,7 @@ namespace TenekDownloader.download.model
 
 		public int ExtractProgress => DownloadGroup.ExtractProgress;
 
-        [JsonIgnore]
-        public long ByteReceived
-        {
-            get => _byteReceived;
-            set => SetProperty(ref _byteReceived ,value);
-        }
-
-        private void PauseDownloadCommand()
+		private void PauseDownloadCommand()
 		{
 			_fileDownloader.CancelDownloadAsync();
 		}
@@ -162,5 +155,5 @@ namespace TenekDownloader.download.model
 		{
 			return link.ToLower().Contains(HTTP);
 		}
-    }
+	}
 }

@@ -8,11 +8,12 @@ namespace TenekDownloader.link.imp
 {
 	public class ZippyshareInterpreter : ILinkInterpreter
 	{
-        private const string JsFormat = @"function download(){{var zippyObj={{}}; var dummy = undefined; {0} return zippyObj.href;}}";
+		private static readonly string JS_FORMAT =
+			@"function download(){{var zippyObj={{}}; var dummy = undefined; {0} return zippyObj.href;}}";
 
-        private string _htmlCode;
+		private string _htmlCode;
 		private string _prefix;
-        private const string JavascriptPattern = "(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))";
+        private static readonly string JavascriptPattern = "(?<=(<script type=\"text/javascript\">))(\\w|\\d|\\n|\\s|\\S)+?(?=(</script>))";
         public LinkInfo LinkInfo { get; private set; }
 
 		public void ProcessLink(string link)
@@ -45,13 +46,12 @@ namespace TenekDownloader.link.imp
 
 		private void GetDirectLinkFromLink()
 		{
-			var js = GetJavaScriptSection()
-                .Replace("document.getElementById('dlbutton')", "zippyObj")
+			var js = GetJavaScriptSection().Replace("document.getElementById('dlbutton')", "zippyObj")
 				.Replace("document.getElementById('omg').getAttribute('class')", "2")
 				.Replace("document.getElementById('fimage')", "dummy");
 
-			var jsScript = string.Format(JsFormat, js);
-            string link;
+			var jsScript = string.Format(JS_FORMAT, js);
+            var link = string.Empty;
 			using (var engine = new ScriptEngine("jscript"))
 			{
 				var parsed = engine.Parse(jsScript);
@@ -80,7 +80,7 @@ namespace TenekDownloader.link.imp
 
 		private void ProcessFileSize()
 		{
-			LinkInfo.FileSize = null;
+			LinkInfo.FileSize = 0;
 		}
 
 		private void CheckFileExistence()
