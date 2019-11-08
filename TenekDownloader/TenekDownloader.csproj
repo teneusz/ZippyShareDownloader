@@ -196,8 +196,6 @@
     <Compile Include="util\dlc\Tools.cs" />
     <Compile Include="viewModel\ViewModel.cs" />
     <Compile Include="viewModel\LinksHelper.cs" />
-    <Compile Include="view\converter\AnythingToVsibleConverter.cs" />
-    <Compile Include="view\model\ColumnVisible.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -256,6 +254,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="view\converter\" />
+    <Folder Include="view\model\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

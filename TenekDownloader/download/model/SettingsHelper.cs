@@ -1,6 +1,5 @@
 ﻿using Prism.Mvvm;
 using TenekDownloader.Properties;
-using TenekDownloader.view.model;
 
 namespace TenekDownloader.download.model
 {

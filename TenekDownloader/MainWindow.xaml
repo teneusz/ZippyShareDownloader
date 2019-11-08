@@ -41,17 +41,13 @@
                 <DataGrid AutoGenerateColumns="False" x:Name="DataGrid"
                           ItemsSource="{Binding Entities}" SelectionUnit="Cell" CanUserAddRows="false" Margin="0,0,0,0">
                     <DataGrid.Columns>
-                        <DataGridCheckBoxColumn Header="Serialize"
-                                                Visibility="{Binding SettingHelper.ColumnVisible.Serializable}"
+                        <DataGridCheckBoxColumn Header="Serialize"                                             
                                                 Binding="{Binding DownloadGroup.IsSerialized}" />
                         <DataGridTextColumn Header="File Name"
-                                            Visibility="{Binding SettingHelper.ColumnVisible.FileName}"
                                             Binding="{Binding LinkInfo.FileName}" />
                         <DataGridTextColumn Header="Group Name"
-                                            Visibility="{Binding SettingHelper.ColumnVisible.GroupName}"
                                             Binding="{Binding GroupName}" />
                         <DataGridTextColumn Header="Service Name"
-                                            Visibility="Hidden"
                                             Binding="{Binding LinkInfo.ServiceName}" IsReadOnly="True" />
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
                         <DataGridTextColumn Header="Download speed" Binding="{Binding LinkInfo.DownloadSpeed}" IsReadOnly="True" />
