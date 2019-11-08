@@ -1,2 +1,4 @@
 language: csharp
 solution: ZippyShareDownloader.sln
+notifications:
+  slack: it-koszalin:s7Q44bIucAGHcbmkDEmoRYGL

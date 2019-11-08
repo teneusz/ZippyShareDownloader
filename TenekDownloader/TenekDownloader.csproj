@@ -173,7 +173,6 @@
     <Compile Include="download\service\Cache.cs" />
     <Compile Include="download\service\CachObject.cs" />
     <Compile Include="download\service\impl\WebClientDownloadService.cs" />
-    <Compile Include="download\service\impl\FileDownloaderDownloadService.cs" />
     <Compile Include="download\model\SettingsHelper.cs" />
     <Compile Include="download\service\impl\WebRequestDownloadService.cs" />
     <Compile Include="download\service\WebRequestClient.cs" />
@@ -253,10 +252,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="view\converter\" />
-    <Folder Include="view\model\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
