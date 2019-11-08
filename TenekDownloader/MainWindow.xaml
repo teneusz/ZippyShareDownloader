@@ -56,11 +56,12 @@
                         <DataGridTextColumn Header="Status" Binding="{Binding Status}" IsReadOnly="True" />
                         <DataGridTextColumn Header="Download speed" Binding="{Binding LinkInfo.DownloadSpeed}" IsReadOnly="True" />
                         <DataGridTextColumn Header="Time left" Binding="{Binding LinkInfo.TimeLeft}" IsReadOnly="True" />
+                        <DataGridTextColumn Header="Percent" Binding="{Binding DownloadPercent}" IsReadOnly="True" />
                         <DataGridTemplateColumn Header="Progress">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
                                     <ProgressBar Maximum="100" Minimum="0"
-                                                 Value="{Binding DownloadPercent, Mode=OneWay, Delay=1000}" />
+                                                 Value="{Binding DownloadPercent, Delay=1000}" />
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

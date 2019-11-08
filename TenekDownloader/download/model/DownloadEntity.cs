@@ -4,156 +4,166 @@ using FileDownloader;
 using Newtonsoft.Json;
 using Prism.Commands;
 using Prism.Mvvm;
+using TenekDownloader.download.service;
 using TenekDownloader.link.model;
 
 namespace TenekDownloader.download.model
 {
-	public class DownloadEntity : BindableBase
-	{
-		public const string HTTP = "http://";
-		public const string HTTPS = "https://";
-		private int _downloadPercent;
-		[JsonIgnore] private IFileDownloader _fileDownloader;
-		private LinkInfo _linkInfo;
-		private DownloadStatus _status = DownloadStatus.Waiting;
+    public class DownloadEntity : BindableBase
+    {
+        public const string HTTP = "http://";
+        public const string HTTPS = "https://";
+        private int _downloadPercent;
+        [JsonIgnore] private IFileDownloader _fileDownloader;
+        private LinkInfo _linkInfo;
+        private DownloadStatus _status = DownloadStatus.Waiting;
+        [JsonIgnore]
+        public WebRequestClient WebRequestClient { get; set; }
+        public String Errors { get; set; }
 
-		public DownloadEntity(string link) : this()
-		{
-			LinkInfo = new LinkInfo
-			{
-				OrignalLink = link,
-				ServiceName = GetService(link),
-				DownloadEntity = this
-			};
-		}
 
-		public DownloadEntity()
-		{
-			PauseDownload = new DelegateCommand(PauseDownloadCommand);
-			ResumeDownload = new DelegateCommand(ResumeDownloadCommand);
-		}
+        public DownloadEntity(string link) : this()
+        {
+            LinkInfo = new LinkInfo
+            {
+                OrignalLink = link,
+                ServiceName = GetService(link),
+                DownloadEntity = this
+            };
+        }
 
-		public ICommand PauseDownload { get; }
-		public ICommand ResumeDownload { get; }
+        public DownloadEntity()
+        {
+            PauseDownload = new DelegateCommand(PauseDownloadCommand);
+            ResumeDownload = new DelegateCommand(ResumeDownloadCommand);
+        }
 
-		public LinkInfo LinkInfo
-		{
-			get => _linkInfo;
-			set => SetProperty(ref _linkInfo, value);
-		}
+        public ICommand PauseDownload { get; }
+        public ICommand ResumeDownload { get; }
 
-		public DownloadStatus Status
-		{
-			get => _status;
-			set => SetProperty(ref _status, value);
-		}
+        public LinkInfo LinkInfo
+        {
+            get => _linkInfo;
+            set => SetProperty(ref _linkInfo, value);
+        }
 
-		public int DownloadPercent
-		{
-			get => _downloadPercent;
-			set => SetProperty(ref _downloadPercent, value);
-		}
+        public DownloadStatus Status
+        {
+            get => _status;
+            set => SetProperty(ref _status, value);
+        }
 
-		[JsonIgnore]
-		public IFileDownloader FileDownloaderObj
-		{
-			get => _fileDownloader;
-			set
-			{
-				SetProperty(ref _fileDownloader, value);
-				if (_fileDownloader != null)
-				{
-					_fileDownloader.DownloadProgressChanged += DownloadProgressChanged;
-					_fileDownloader.DownloadFileCompleted += DownloadFileCompleted;
-				}
-			}
-		}
+        public int DownloadPercent
+        {
+            get => _downloadPercent;
+            set => SetProperty(ref _downloadPercent, value);
+        }
 
-		private void DownloadFileCompleted(object sender, DownloadFileCompletedArgs args)
-		{
-			switch (args.State)
-			{
-				case CompletedState.Succeeded:
-					Status = DownloadStatus.Completed;
-					break;
-				case CompletedState.Canceled:
-					Status = DownloadStatus.Canceled;
-					break;
-				case CompletedState.Failed:
-					Status = DownloadStatus.Error;
-					break;
-			}
-		}
+        [JsonIgnore]
+        public IFileDownloader FileDownloaderObj
+        {
+            get => _fileDownloader;
+            set
+            {
+                SetProperty(ref _fileDownloader, value);
+                if (_fileDownloader != null)
+                {
+                    _fileDownloader.DownloadProgressChanged += DownloadProgressChanged;
+                    _fileDownloader.DownloadFileCompleted += DownloadFileCompleted;
+                }
+            }
+        }
 
-		[JsonIgnore] public DownloadGroup DownloadGroup { get; set; }
+        private void DownloadFileCompleted(object sender, DownloadFileCompletedArgs args)
+        {
+            switch (args.State)
+            {
+                case CompletedState.Succeeded:
+                    Status = DownloadStatus.Completed;
+                    break;
+                case CompletedState.Canceled:
+                    Status = DownloadStatus.Canceled;
+                    break;
+                case CompletedState.Failed:
+                    Status = DownloadStatus.Error;
+                    break;
+            }
+        }
 
-		public string GroupName => DownloadGroup?.Name;
-		public Action<object> AfterDownload { get; set; }
+        [JsonIgnore] public DownloadGroup DownloadGroup { get; set; }
 
-		public Action<object> StartDownload { get; set; }
+        public string GroupName => DownloadGroup?.Name;
+        public Action<object> AfterDownload { get; set; }
 
-		public int ExtractProgress => DownloadGroup.ExtractProgress;
+        public Action<object> StartDownload { get; set; }
 
-		private void PauseDownloadCommand()
-		{
-			_fileDownloader.CancelDownloadAsync();
-		}
+        public int ExtractProgress => DownloadGroup.ExtractProgress;
 
-		private void ResumeDownloadCommand()
-		{
-			_fileDownloader.DownloadFileAsync(new Uri(_linkInfo.DownloadLink), _linkInfo.DownloadLocation);
-		}
+        private void PauseDownloadCommand()
+        {
+            _fileDownloader.CancelDownloadAsync();
+        }
 
-		private void DownloadProgressChanged(object sender, DownloadFileProgressChangedArgs args)
-		{
-			var percent = args.BytesReceived / (double) args.TotalBytesToReceive;
-			DownloadPercent = (int) (percent * 100);
-		}
+        private void ResumeDownloadCommand()
+        {
+            _fileDownloader.DownloadFileAsync(new Uri(_linkInfo.DownloadLink), _linkInfo.DownloadLocation);
+        }
 
-		private static string GetService(string link)
-		{
+        private void DownloadProgressChanged(object sender, DownloadFileProgressChangedArgs args)
+        {
+            var percent = args.BytesReceived / (double)args.TotalBytesToReceive;
+            DownloadPercent = (int)(percent * 100);
+        }
 
-			if (link == null) throw new ArgumentNullException();
+        private static string GetService(string link)
+        {
 
-				var result = string.Empty;
+            if (link == null) throw new ArgumentNullException();
 
-			if (HasHttp(link))
-				result = RemoveHttp(link);
-			else if (HasHttps(link))
-				result = RemoveHttps(link);
+            var result = string.Empty;
 
-			return ExtractServiceName(result);
-		}
+            if (HasHttp(link))
+                result = RemoveHttp(link);
+            else if (HasHttps(link))
+                result = RemoveHttps(link);
 
-		private static string ExtractServiceName(string link)
-		{
-			var tab = link.Remove(link.IndexOf('/')).Split('.');
-			link = string.Empty;
-			foreach (var s in tab)
-				if (s.Length > link.Length)
-					link = s;
+            return ExtractServiceName(result);
+        }
 
-			return link;
-		}
+        private static string ExtractServiceName(string link)
+        {
+            var tab = link.Remove(link.IndexOf('/')).Split('.');
+            link = string.Empty;
+            foreach (var s in tab)
+                if (s.Length > link.Length)
+                    link = s;
 
-		private static string RemoveHttps(string link)
-		{
-			return link.Replace(HTTPS, string.Empty);
-		}
+            return link;
+        }
 
-		private static string RemoveHttp(string link)
-		{
-			return link.Replace(HTTP, string.Empty);
-		}
+        private static string RemoveHttps(string link)
+        {
+            return link.Replace(HTTPS, string.Empty);
+        }
 
-		private static bool HasHttps(string link)
-		{
-			return link.ToLower().Contains(HTTPS);
-		}
+        private static string RemoveHttp(string link)
+        {
+            return link.Replace(HTTP, string.Empty);
+        }
 
-		private static bool HasHttp(string link)
-		{
-			return link.ToLower().Contains(HTTP);
-		}
-	}
+        private static bool HasHttps(string link)
+        {
+            return link.ToLower().Contains(HTTPS);
+        }
+
+        private static bool HasHttp(string link)
+        {
+            return link.ToLower().Contains(HTTP);
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+    }
 }

@@ -91,8 +91,9 @@ namespace TenekDownloader.link.model
             {
                 if (DownloadEntity != null)
                 {
-                    DownloadEntity.DownloadPercent = (int) Math.Round((DownloadedSize / FileSize) * 100);   
+                    DownloadEntity.DownloadPercent = (int)Math.Round((DownloadedSize / FileSize) * 100);
                 }
+
                 SetProperty(ref _cachedSize, value);
             }
         }

@@ -282,7 +282,7 @@ namespace TenekDownloader.download.stream
                 {
                     // Calculate the time to sleep.
                     long wakeElapsed = _byteCount * 1000L / _maximumBytesPerSecond;
-                    int toSleep = (int) (wakeElapsed - elapsedMilliseconds);
+                    int toSleep = (int)(wakeElapsed - elapsedMilliseconds);
 
                     if (toSleep > 1)
                     {

@@ -15,12 +15,12 @@ namespace TenekDownloader.download.service.impl
         {
             if (Downloads.Count > 0)
             {
-                foreach (WebRequestClient download in Downloads)
+                foreach (WebRequestClient download in Downloads.ToList())
                 {
-//                    if (download.DownloadEntity.Status == DownloadStatus.Paused || download.HasError)
-//                    {
+                    if (download.DownloadEntity.Status != DownloadStatus.Completed)
+                    {
                         download.Start();
-//                    }
+                    }
                 }
             }
         }

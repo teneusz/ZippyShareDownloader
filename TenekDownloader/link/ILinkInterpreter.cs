@@ -2,10 +2,10 @@
 
 namespace TenekDownloader.link
 {
-	public interface ILinkInterpreter
-	{
-		LinkInfo LinkInfo { get; }
+    public interface ILinkInterpreter
+    {
+        LinkInfo LinkInfo { get; }
 
-		void ProcessLink(string link);
-	}
+        void ProcessLink(string link);
+    }
 }

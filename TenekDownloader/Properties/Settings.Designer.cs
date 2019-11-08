@@ -8,88 +8,96 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TenekDownloader.Properties {
-    
-    
+namespace TenekDownloader.Properties
+{
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.7.0.0")]
-    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
-        
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "16.3.0.0")]
+    internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase
+    {
+
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
-        
-        public static Settings Default {
-            get {
+
+        public static Settings Default
+        {
+            get
+            {
                 return defaultInstance;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string SevenZipDll {
-            get {
+        public string SevenZipDll
+        {
+            get
+            {
                 return ((string)(this["SevenZipDll"]));
             }
-            set {
+            set
+            {
                 this["SevenZipDll"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string DownloadLocation {
-            get {
+        public string DownloadLocation
+        {
+            get
+            {
                 return ((string)(this["DownloadLocation"]));
             }
-            set {
+            set
+            {
                 this["DownloadLocation"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool AutoDownload {
-            get {
+        public bool AutoDownload
+        {
+            get
+            {
                 return ((bool)(this["AutoDownload"]));
             }
-            set {
+            set
+            {
                 this["AutoDownload"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string Setting {
-            get {
+        public string Setting
+        {
+            get
+            {
                 return ((string)(this["Setting"]));
             }
-            set {
+            set
+            {
                 this["Setting"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        public global::TenekDownloader.view.model.ColumnVisible ColumnVisibility {
-            get {
-                return ((global::TenekDownloader.view.model.ColumnVisible)(this["ColumnVisiblity"]));
-            }
-            set {
-                this["ColumnVisiblity"] = value;
-            }
-        }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int MaxDownloadingCount {
-            get {
+        public int MaxDownloadingCount
+        {
+            get
+            {
                 return ((int)(this["MaxDownloadingCount"]));
             }
-            set {
+            set
+            {
                 this["MaxDownloadingCount"] = value;
             }
         }
@@ -99,29 +107,44 @@ namespace TenekDownloader.Properties {
         [global::System.Configuration.DefaultSettingValueAttribute("1024")]
         public int MemoryCacheSize
         {
-            get =>  (int) this["MemoryCacheSize"];
-            set => this["MemoryCacheSize"] = value;
+            get
+            {
+                return ((int)(this["MemoryCacheSize"]));
+            }
+            set
+            {
+                this["MemoryCacheSize"] = value;
+            }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool EnableSpeedLimit {
-            get {
+        public bool EnableSpeedLimit
+        {
+            get
+            {
                 return ((bool)(this["EnableSpeedLimit"]));
             }
-            set {
+            set
+            {
                 this["EnableSpeedLimit"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1024")]
         public int SpeedLimit
         {
-            get =>  (int) this["MemoryCacheSize"];
-            set => this["MemoryCacheSize"] = value;
+            get
+            {
+                return ((int)(this["SpeedLimit"]));
+            }
+            set
+            {
+                this["SpeedLimit"] = value;
+            }
         }
     }
 }

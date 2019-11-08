@@ -129,4 +129,7 @@
   <data name="Error_I_double_dare_you" xml:space="preserve">
     <value>Dare you. I double dare you Motherfucker</value>
   </data>
+  <data name="dare_you" xml:space="preserve">
+    <value>Dare you motherfucker. I double dare you</value>
+  </data>
 </root>

@@ -19,201 +19,215 @@ using Application = System.Windows.Application;
 
 namespace TenekDownloader.viewModel
 {
-	public class ViewModel : BindableBase
-	{
-		private const string ConfigJson = "config.json";
-		private static readonly WebRequestDownloadService DownloadService = new WebRequestDownloadService();
-		private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
-		private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
-		private LinksHelper _linksHelper = new LinksHelper();
+    public class ViewModel : BindableBase
+    {
+        private const string ConfigJson = "config.json";
+        private static readonly WebRequestDownloadService DownloadService = new WebRequestDownloadService();
+        private ObservableCollection<DownloadEntity> _entities = new ObservableCollection<DownloadEntity>();
+        private ObservableCollection<DownloadGroup> _groups = new ObservableCollection<DownloadGroup>();
+        private LinksHelper _linksHelper = new LinksHelper();
 
-		public ViewModel()
-		{
-			ExitCommand = new DelegateCommand(Exit);
-			AddLinksCommand = new DelegateCommand(AddLinks);
-			AboutCommand = new DelegateCommand(About);
-			DownloadCommand = new DelegateCommand(Download);
-			UncheckAllCommand = new DelegateCommand(UncheckAll);
-			ClearListCommand = new DelegateCommand(ClearList);
-			SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
-			SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
-			TestCommand = new DelegateCommand(ShowNotification);
-			DlcCommand = new DelegateCommand(ReadDlc);
-			LoadGroupsFromFile();
-		}
+        public ViewModel()
+        {
+            ExitCommand = new DelegateCommand(Exit);
+            AddLinksCommand = new DelegateCommand(AddLinks);
+            AboutCommand = new DelegateCommand(About);
+            DownloadCommand = new DelegateCommand(Download);
+            UncheckAllCommand = new DelegateCommand(UncheckAll);
+            ClearListCommand = new DelegateCommand(ClearList);
+            SaveDownloadPathCommand = new DelegateCommand(SaveDownloadPath);
+            SaveSevenZipLibraryPathCommand = new DelegateCommand(SaveSevenZipLibraryPath);
+            TestCommand = new DelegateCommand(ShowNotification);
+            DlcCommand = new DelegateCommand(ReadDlc);
+            LoadGroupsFromFile();
+        }
 
-		public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
+        public SettingsHelper SettingHelper { get; set; } = new SettingsHelper();
 
 
-		public LinksHelper LinksHelper
-		{
-			get => _linksHelper;
-			set => SetProperty(ref _linksHelper, value);
-		}
+        public LinksHelper LinksHelper
+        {
+            get => _linksHelper;
+            set => SetProperty(ref _linksHelper, value);
+        }
 
-		public ObservableCollection<DownloadGroup> Groups
-		{
-			get => _groups;
-			set => SetProperty(ref _groups, value);
-		}
+        public ObservableCollection<DownloadGroup> Groups
+        {
+            get => _groups;
+            set => SetProperty(ref _groups, value);
+        }
 
-		public ObservableCollection<DownloadEntity> Entities
-		{
-			get
-			{
-				//TODO: I have no other idea :D
-				_entities.Clear();
-                
-				foreach (var downloadGroup in Groups) _entities.AddRange(downloadGroup.Entities);
+        public ObservableCollection<DownloadEntity> Entities
+        {
+            get
+            {
+                //TODO: I have no other idea :D
+                _entities.Clear();
 
-				return _entities;
-			}
-			set => SetProperty(ref _entities, value);
-		}
+                foreach (var downloadGroup in Groups) _entities.AddRange(downloadGroup.Entities);
 
-		public ICommand ExitCommand { get; set; }
-		public ICommand AddLinksCommand { get; set; }
-		public ICommand DownloadCommand { get; set; }
-		public ICommand AboutCommand { get; set; }
-		public ICommand UncheckAllCommand { get; }
-		public ICommand ClearListCommand { get; }
-		public ICommand SaveDownloadPathCommand { get; }
-		public ICommand SaveSevenZipLibraryPathCommand { get; }
-		public ICommand TestCommand { get; }
-		public ICommand DlcCommand { get; }
+                return _entities;
+            }
+            set => SetProperty(ref _entities, value);
+        }
 
-		private void LoadGroupsFromFile()
-		{
-			if (!File.Exists(ConfigJson)) return;
-			Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>(ConfigJson);
-			foreach (var downloadGroup in Groups)
-			{
-				foreach (var downloadGroupEntity in downloadGroup.Entities)
-				{
-					downloadGroupEntity.DownloadGroup = downloadGroup;
-						var webRequestClient = new WebRequestClient(downloadGroupEntity);
-						webRequestClient.AfterDownload += (sender, args) =>
-						{
-							SaveGroupsToFile();
-							WebRequestDownloadService.INSTANCE.Download();
-						};
-						AbstractDownloadService.Downloads.Add(webRequestClient);
-						downloadGroupEntity.LinkInfo.DownloadEntity = downloadGroupEntity;
+        public ICommand ExitCommand { get; set; }
+        public ICommand AddLinksCommand { get; set; }
+        public ICommand DownloadCommand { get; set; }
+        public ICommand AboutCommand { get; set; }
+        public ICommand UncheckAllCommand { get; }
+        public ICommand ClearListCommand { get; }
+        public ICommand SaveDownloadPathCommand { get; }
+        public ICommand SaveSevenZipLibraryPathCommand { get; }
+        public ICommand TestCommand { get; }
+        public ICommand DlcCommand { get; }
 
-					AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
-					
-				}
-			}
+        private void LoadGroupsFromFile()
+        {
+            if (!File.Exists(ConfigJson)) return;
+            Groups = SerializerUtils.ReadFromJsonFile<ObservableCollection<DownloadGroup>>(ConfigJson);
+            foreach (var downloadGroup in Groups)
+            {
+                foreach (var downloadGroupEntity in downloadGroup.Entities)
+                {
+                    downloadGroupEntity.DownloadGroup = downloadGroup;
+                    var webRequestClient = new WebRequestClient(downloadGroupEntity);
+                    webRequestClient.AfterDownload += WebClientAfterDownload;
+                    AbstractDownloadService.Downloads.Add(webRequestClient);
+                    downloadGroupEntity.LinkInfo.DownloadEntity = downloadGroupEntity;
 
-			if (SettingHelper.AutoDownload) Download();
-		}
+                    AbstractDownloadService.DownloadQueue.Enqueue(downloadGroupEntity);
 
-		private void SaveGroupsToFile()
-		{
-			SerializerUtils.WriteToJsonFile(ConfigJson, Groups.ToList().FindAll(e => e.IsSerialized));
-		}
+                }
+            }
 
-		public void Download()
-		{
-			AbstractDownloadService.Downloading = true;
-			DownloadService.Download();
-		}
+            if (SettingHelper.AutoDownload) Download();
+        }
 
-		public void SaveDownloadPath()
-		{
-			var dialog = new FolderBrowserDialog();
-			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
-		}
+        public void WebClientAfterDownload(object sender, EventArgs args)
+        {
+            SaveGroupsToFile();
+            //WebRequestDownloadService.INSTANCE.Download();
+            if (sender is DownloadEntity)
+            {
+                var entity = ((DownloadEntity)sender);
+                if (entity.Status == DownloadStatus.Completed)
+                    AbstractDownloadService.Downloads.Remove(entity.WebRequestClient);
+            }
+            Download();
+        }
 
-		private void SaveSevenZipLibraryPath()
-		{
-			var dialog = new OpenFileDialog {Filter = Resources.SevenZipFileFilter};
-			if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
-		}
 
-		public void AddLinks()
-		{
-			var links = LinksHelper.Links.Split('\n');
-			if (LinksHelper.IsInGroup)
-			{
-				var group = new DownloadGroup(new List<string>(links), LinksHelper.Name,
-					LinksHelper.IsCompressed)
-				{
-					ManyArchives = LinksHelper.HasManyArchives,
+        private void SaveGroupsToFile()
+        {
+            SerializerUtils.WriteToJsonFile(ConfigJson, Groups.ToList().FindAll(e => e.IsSerialized));
+        }
+
+        public void Download()
+        {
+            AbstractDownloadService.Downloading = true;
+            DownloadService.Download();
+        }
+
+        public void SaveDownloadPath()
+        {
+            using (var dialog = new FolderBrowserDialog())
+                if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.DownloadPath = dialog.SelectedPath + @"\";
+        }
+
+        private void SaveSevenZipLibraryPath()
+        {
+            using (var dialog = new OpenFileDialog { Filter = Resources.SevenZipFileFilter })
+                if (dialog.ShowDialog() == DialogResult.OK) SettingHelper.SevenZipLibraryLocation = dialog.SafeFileName;
+        }
+
+        public void AddLinks()
+        {
+            var links = LinksHelper.Links.Split('\n');
+            if (LinksHelper.IsInGroup)
+            {
+                var group = new DownloadGroup(new List<string>(links), LinksHelper.Name,
+                    LinksHelper.IsCompressed)
+                {
+                    ManyArchives = LinksHelper.HasManyArchives,
                     ArchivePassword = LinksHelper.ArchivePassword
-				};
-				Groups.Add(group);
-				foreach (var downloadEntity in group.Entities)
-				{
-					var webRequestClient = new WebRequestClient(downloadEntity);
-					AbstractDownloadService.Downloads.Add(webRequestClient);
-//					webRequestClient.Start();
-				}
-			}
-			else
-			{
-				foreach (var link in links)
-				{
-					var group = new DownloadGroup(new List<string> {link}, string.Empty, LinksHelper.IsCompressed)
+                };
+                Groups.Add(group);
+                foreach (var downloadEntity in group.Entities)
+                {
+                    var webRequestClient = new WebRequestClient(downloadEntity);
+                    webRequestClient.AfterDownload += WebClientAfterDownload;
+                    AbstractDownloadService.Downloads.Add(webRequestClient);
+
+                    //					webRequestClient.Start();
+                }
+            }
+            else
+            {
+                foreach (var link in links)
+                {
+                    var group = new DownloadGroup(new List<string> { link }, string.Empty, LinksHelper.IsCompressed)
                     {
                         ArchivePassword = LinksHelper.ArchivePassword
                     };
-					Groups.Add(group);
+                    Groups.Add(group);
                     foreach (var downloadEntity in group.Entities)
                         AbstractDownloadService.DownloadQueue.Enqueue(downloadEntity);
                 }
-			}
+            }
 
-			RaisePropertyChanged(nameof(Entities));
-			LinksHelper = new LinksHelper();
-			SaveGroupsToFile();
-			ShowNotification();
-			if (!AbstractDownloadService.Downloading && SettingHelper.AutoDownload) Download();
-		}
+            RaisePropertyChanged(nameof(Entities));
+            LinksHelper = new LinksHelper();
+            SaveGroupsToFile();
+            ShowNotification();
+            if (!AbstractDownloadService.Downloading && SettingHelper.AutoDownload) Download();
+        }
 
-		private void ShowNotification()
-		{
-		}
+        private void ShowNotification()
+        {
+        }
 
-		private void ReadDlc()
-		{
-			var open = new OpenFileDialog {Filter = Resources.DlcFileFilter};
-			if (open.ShowDialog() != DialogResult.OK) return;
-			LinksHelper.Links = string.Empty;
-			var links = (from packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files where !string.IsNullOrEmpty(packageFile.URL.Trim()) select packageFile.URL).ToList();
-           
-			LinksHelper.Links = string.Join(Environment.NewLine, links);
-		}
+        private void ReadDlc()
+        {
+            using var open = new OpenFileDialog { Filter = Resources.DlcFileFilter };
+            if (open.ShowDialog() != DialogResult.OK) return;
+            LinksHelper.Links = string.Empty;
+            var links = (from packageFile in new DlcContainer(File.ReadAllText(open.FileName)).Content.Package.Files where !string.IsNullOrEmpty(packageFile.URL.Trim()) select packageFile.URL).ToList();
 
-		public void About()
-		{
-		}
+            LinksHelper.Links = string.Join(Environment.NewLine, links);
+        }
 
-		public void UncheckAll()
-		{
-			foreach (var entity in Groups) entity.IsSerialized = false;
-		}
+        public void About()
+        {
+        }
 
-		public void ClearList()
-		{
-			foreach (var entity in Groups.ToList())
-				if (!entity.IsSerialized)
-					Groups.Remove(entity);
+        public void UncheckAll()
+        {
+            foreach (var entity in Groups) entity.IsSerialized = false;
+        }
 
-			RaisePropertyChanged(nameof(Entities));
+        public void ClearList()
+        {
+            foreach (var entity in Groups.ToList())
+                if (!entity.IsSerialized)
+                {
+                    Groups.Remove(entity);
+                }
 
-			SaveGroupsToFile();
+            RaisePropertyChanged(nameof(Entities));
+
+            SaveGroupsToFile();
             GC.Collect();
-		}
+        }
 
-		public void Exit()
-		{
-			Application.Current.Shutdown();
-		}
+        public void Exit()
+        {
+            Application.Current.Shutdown();
+        }
 
-		~ViewModel()
-		{
-			SaveGroupsToFile();
-		}
-	}
+        ~ViewModel()
+        {
+            SaveGroupsToFile();
+        }
+    }
 }
